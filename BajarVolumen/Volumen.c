@@ -27,21 +27,22 @@ int main()
   cabecera cab;
   unsigned int x;
   unsigned char buffer4[4], buffer2 [2];
-  char nombre_for[10] = "";
+  char nombre_for [10] = "";
   FILE *ptOriginal, *ptModificado;
-  
-  printf("\n\nPrograma para bajar el volumen de un archivo wav\n\n\n");
-  ptOriginal = fopen("Entrada.wav","rb");                                            //Abrimos el archivo
+  char * archivoOriginal = (char *) malloc (sizeof (char));
+  printf("Ingrese el nombre del archivo al que desea bajarle el volumen:\t");
+  scanf ("%s", archivoOriginal);
+  ptOriginal = fopen(archivoOriginal,"rb");                                            //Abrimos el archivo
   if (ptOriginal == NULL)
   {
-    printf("Error al abrir archivo\n");
+    printf("Error al abrir archivo %s \n", archivoOriginal);
     exit(0);
   }
   
   ptModificado = fopen("Modificado.wav","w");
   if (ptModificado == NULL)
   {
-    printf("Error al abrir archivo\n");
+    printf("Error al crear el archivo Modificado.wav %s\n");
     exit(0);
   }
   
@@ -121,7 +122,6 @@ int main()
     lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
     cab.datos = ((buffer2 [0]) | (buffer2[1] << 8));
   }
-
   fclose (ptModificado);
   fclose(ptOriginal);
 }
