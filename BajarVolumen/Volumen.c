@@ -1,127 +1,183 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
-typedef struct CABECERA
+struct CABECERA
 {
-  unsigned char riff[4];
-  unsigned int tam; 
-  unsigned char wave[4];
-  unsigned char fmt[4];
-  unsigned int tam_formato;
-  unsigned int tipo_formato;
-  unsigned int no_canal;
-  unsigned int frecuencia_muestreo;
-  unsigned int rango_byte;
-  unsigned int block_align;
-  unsigned int bits_onda;
-  unsigned char data[4];
-  unsigned int tam_data;
-  unsigned int datos;
-} cabecera;
+	unsigned char chunkID[4];
+	unsigned int ChunkSize; 
+	unsigned char format[4];
+	unsigned char SubChunk1ID[4];
+	unsigned int SubChunk1Size;
+	unsigned int AudioFormat;
+	unsigned int no_canal;
+	unsigned int SimpleRate;
+	unsigned int ByteRate;
+	unsigned int block_align;
+	unsigned int BitsPerSample;
+	unsigned char SubChunk2ID[4];
+	unsigned int SubChunk2Size;
+	unsigned int data;
+	
+};
 
-int main()
+FILE *fp1, *fp2;
+char *nombreArch;
+char *nom_arch;
+struct CABECERA cabecera;
+
+
+
+int main(int argc, char const *argv[])
 {
-  system ("cls");
-  int lectura = 0, tam_archivo, i;
-  cabecera cab;
-  unsigned int x;
-  unsigned char buffer4[4], buffer2 [2];
-  char nombre_for [10] = "";
-  FILE *ptOriginal, *ptModificado;
-  char * archivoOriginal = (char *) malloc (sizeof (char));
-  printf("Ingrese el nombre del archivo al que desea bajarle el volumen:\t");
-  scanf ("%s", archivoOriginal);
-  ptOriginal = fopen(archivoOriginal,"rb");                                            //Abrimos el archivo
-  if (ptOriginal == NULL)
-  {
-    printf("Error al abrir archivo %s \n", archivoOriginal);
-    exit(0);
-  }
-  
-  ptModificado = fopen("Modificado.wav","w");
-  if (ptModificado == NULL)
-  {
-    printf("Error al crear el archivo Modificado.wav %s\n");
-    exit(0);
-  }
-  
-  lectura = fread(cab.riff, sizeof(cab.riff), 1, ptOriginal);                        //Leemos el primer argumento de la cabecera
-  lectura = fwrite (cab.riff, sizeof (cab.riff), 1, ptModificado);
-  printf("(1-4) RIFF: %s\n",cab.riff);                                                //Imprimimos el valor del formato (RIFF)
+	unsigned char buffer4[4];
+	unsigned char buffer2[2];
+	unsigned char buf[1];
+	unsigned char nombre_for[10];
+	unsigned char *buffer;
+	int data_ext_m1,valorsum;
+	int comparacion1,comparacion2,comparacionf;
+	int tamanio_total,i,j,contador,divisor4,a,valorMul,b;
+	contador=0;
+	char * nombreModificado = (char *) malloc (sizeof (char));
+	char * nom_arch = (char *) malloc (sizeof (char));
+	printf("Programa para bajar el volumen de un archivo wav\n");
+	if (argc < 3)
+	{
+		printf("Error, faltan argumentos.\n");
+	}else
+	{
+		nom_arch = (char *) argv [1];
+		nombreModificado = (char *) argv [2];
+	}
+	// Se abre el archivo
+	fp1=fopen(nom_arch,"rb");
+	if (fp1 == NULL)
+	{
+		printf("Error al abrir archivo o el archivo no existe\n");
+		exit(0);
+	}
+	else
+		printf("Se abrio el archivo\n");
+		
+	fp2 = fopen(nombreModificado,"wb");
+	if (fp2==NULL)
+	{
+		printf("No existe el archivo\n");
+		exit(1);
+	}
+	else
+		printf("Se creo el archivo modificado\n");
+	int read = 0;
+	
+	//Lee la cabecera RIFF
+	
 
-  lectura = fread(buffer4, sizeof(buffer4), 1, ptOriginal);                           //Guardamos los siguientes 4 bytes
-  lectura = fwrite (buffer4, sizeof (buffer4), 1, ptModificado);
-  cab.tam = ((buffer4[0]) | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24));
-  printf("(5-8) Tamaño del RIFF: %u bytes.\n",cab.tam);
+	//ChunkID 
+	read = fread(cabecera.chunkID,sizeof(cabecera.chunkID),1,fp1);
+	printf("(1-4) chunkID: %s\n\n",cabecera.chunkID);
+	read = fwrite (cabecera.chunkID, sizeof (cabecera.chunkID), 1, fp2);
 
-  lectura = fread(cab.wave, sizeof(cab.wave), 1, ptOriginal);                         //Leemos los siguientes 4 bytes
-  lectura = fwrite (cab.wave, sizeof (cab.wave), 1, ptModificado);
-  printf("(9-12) Onda : %s\n",cab.wave);                                              //Imprimimos bytes leídos
+	//ChunkSize 
+	//Se convierten los datos a entero
+	read = fread(buffer4, sizeof(buffer4),1,fp1);
+	read = fwrite(buffer4, sizeof(buffer4),1,fp2);
+	cabecera.ChunkSize = (buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24));
+	printf("(5-8) ChunkSize:  %u\n\n",cabecera.ChunkSize);
 
-  lectura = fread(cab.fmt, sizeof(cab.fmt), 1, ptOriginal);
-  lectura = fwrite (cab.fmt, sizeof (cab.fmt), 1, ptModificado);
-  printf("(13-16) Fmt: %s\n", cab.fmt);
+	//Formato "format"
+		
+	read = fread(cabecera.format, sizeof(cabecera.format),1,fp1);
+	printf("(9-12) Formato : %s\n\n",cabecera.format);
+	read = fwrite (cabecera.format, sizeof (cabecera.format), 1, fp2);
 
-  lectura = fread(buffer4, sizeof(buffer4), 1, ptOriginal);                           //Leemos los siguientes 4 bytes
-  lectura = fwrite (buffer4, sizeof (buffer4), 1, ptModificado);
-  cab.tam_formato = ((buffer4[0]) | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24));
-  printf("(17-20) Tamaño formato: %u\n",cab.tam_formato);
 
-  lectura = fread (buffer2, sizeof(buffer2), 1, ptOriginal);
-  lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
-  cab.tipo_formato = (buffer2[0] | (buffer2[1]<<8));
-  if (cab.tipo_formato == 1)
-    strcpy(nombre_for, "PCM");
-  else if (cab.tipo_formato == 6)
-    strcpy(nombre_for,"A-law");
-  else if (cab.tipo_formato == 7)
-    strcpy(nombre_for,"Mu-law");
-  else 
-    strcpy (nombre_for, "ERROR EN tipo_formato");
-  printf("(21-22) Tipo de Formato: %u, %s\n", cab.tipo_formato, nombre_for);
+	//SubChunk1ID formato de datos "fmt"
+	
+	read = fread(cabecera.SubChunk1ID,sizeof(cabecera.SubChunk1ID),1,fp1);
+	printf("(13-16) SubChunk1ID: %s\n\n",cabecera.SubChunk1ID);
+	read = fwrite (cabecera.SubChunk1ID, sizeof (cabecera.SubChunk1ID), 1, fp2);
 
-  lectura = fread(buffer2, sizeof(buffer2),1,ptOriginal);
-  lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
-  cab.no_canal = ((buffer2[0]) | (buffer2[1]<<8));
-  printf("(23-24) Numero de canal: %u\n", cab.no_canal);
 
-  lectura = fread(buffer4, sizeof(buffer4), 1, ptOriginal);
-  lectura = fwrite (buffer4, sizeof (buffer4), 1, ptModificado);
-  cab.frecuencia_muestreo = ((buffer4[0]) | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24));
-  printf("(25-28) Frecuencia de onda: %u\n",cab.frecuencia_muestreo);
+	//SubChunk1Size
+	read = fread(buffer4, sizeof(buffer4),1,fp1);
+	read = fwrite(buffer4, sizeof(buffer4),1,fp2);
+	cabecera.SubChunk1Size = buffer4[0] | (buffer4[1]<<8) | (buffer4[1]<<16) | (buffer4[1]<<24);	
+	printf("(17-20) SubChunk1Size: %u\n\n",cabecera.SubChunk1Size);
 
-  lectura = fread(buffer4, sizeof(buffer4), 1, ptOriginal);
-  lectura = fwrite (buffer4, sizeof (buffer4), 1, ptModificado);
-  cab.rango_byte = ((buffer4[0]) | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24));
-  printf("(29-32) Rango de byte: %u Rango de Bit: %u\n",cab.rango_byte, cab.rango_byte * 8);
+	
+	// Formato de audio
 
-  lectura = fread(buffer2, sizeof(buffer2), 1, ptOriginal);
-  lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
-  cab.block_align = ((buffer2[0]) | (buffer2[1] << 8));
-  printf("(33-34) Espacio de bloque: %u\n",cab.block_align);
+	read = fread(buffer2, sizeof(buffer2),1,fp1);
+	read = fwrite(buffer2, sizeof(buffer2),1,fp2);
+	cabecera.AudioFormat = buffer2[0] | (buffer2[1]<<8);
+	if (cabecera.AudioFormat == 1)
+		strcpy(nombre_for,"PCM");
+	printf("(21-22) Formato de Audio: %u,%s\n\n",cabecera.AudioFormat,nombre_for);
+	
+	//Canales
 
-  lectura = fread(buffer2, sizeof(buffer2),1,ptOriginal);
-  lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
-  cab.bits_onda = ((buffer2[0]) | (buffer2[1] << 8));
-  printf("(35-36) Bits por onda: %u\n",cab.bits_onda);
+	read = fread(buffer2, sizeof(buffer2),1,fp1);
+	read = fwrite(buffer2, sizeof(buffer2),1,fp2);
+	cabecera.no_canal = buffer2[0] | (buffer2[1]<<8);
+	if (cabecera.no_canal == 1)
+		strcpy(nombre_for,"Mono");
+	else 
+		strcpy(nombre_for,"Stereo");
+	printf("(23-24) Numero de canal: %u, Tipo: %s\n\n",cabecera.no_canal,nombre_for);
 
-  lectura = fread(cab.data, sizeof(cab.data), 1, ptOriginal);                        //Leemos el primer argumento de la cabecera
-  lectura = fwrite (cab.data, sizeof (cab.data), 1, ptModificado);
-  printf("(37-40) Data: %s\n",cab.data);
+	//SampleRate
 
-  lectura = fread(buffer4, sizeof(buffer4), 1, ptOriginal);
-  lectura = fwrite (buffer4, sizeof (buffer4), 1, ptModificado);
-  cab.tam_data = ((buffer4[0]) | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24));
-  printf("(41-44) Tam_data: %u\n",cab.tam_data);
+	read = fread(buffer4, sizeof(buffer4),1,fp1);
+	read = fwrite(buffer4, sizeof(buffer4),1,fp2);
+	cabecera.SimpleRate = buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24);	
+	printf("(25-28) SampleRate: %u\n\n",cabecera.SimpleRate);
+	
+	
+	//ByteRate
+	read = fread(buffer4, sizeof(buffer4),1,fp1);
+	read = fwrite(buffer4, sizeof(buffer4),1,fp2);
+	cabecera.ByteRate = buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24);	
+	printf("(29-32) ByteRate: %u BitRate: %u\n\n",cabecera.ByteRate,cabecera.ByteRate*8);
 
-  tam_archivo = cab.tam + 8;
-  for (i = 0; i < ((tam_archivo - 44) / 2); i ++)
-  {
-    lectura = fread (buffer2, sizeof (buffer2), 1, ptOriginal);
-    lectura = fwrite (buffer2, sizeof (buffer2), 1, ptModificado);
-    cab.datos = ((buffer2 [0]) | (buffer2[1] << 8));
-  }
-  fclose (ptModificado);
-  fclose(ptOriginal);
+	//Block Align
+	read = fread(buffer2, sizeof(buffer2),1,fp1);
+	read = fwrite(buffer2, sizeof(buffer2),1,fp2);
+	cabecera.block_align = buffer2[0] | (buffer2[1]<<8);
+	printf("(33-34) BlockAlign: %u\n\n",cabecera.block_align);
+
+	//Bits per Sample
+	read = fread(buffer2, sizeof(buffer2),1,fp1);
+	read = fwrite(buffer2, sizeof(buffer2),1,fp2);
+	cabecera.BitsPerSample = buffer2[0] | (buffer2[1]<<8);
+	printf("(35-36) BitsPerSample: %u\n\n",cabecera.BitsPerSample);
+
+	//SubChunk2ID
+	read = fread(cabecera.SubChunk2ID,sizeof(cabecera.SubChunk2ID),1,fp1);
+	printf("(37-40) SubChunk2ID: %s\n\n",cabecera.SubChunk2ID);
+	read = fwrite(cabecera.SubChunk2ID,sizeof(cabecera.SubChunk2ID),1,fp2);
+
+
+	//SubChunk2Size
+	read = fread(buffer4, sizeof(buffer4),1,fp1);
+	read = fwrite(buffer4, sizeof(buffer4),1,fp2);
+	cabecera.SubChunk2Size = buffer4[0] | (buffer4[1]<<8) | (buffer4[2]<<16) | (buffer4[3]<<24);	
+	printf("(41-44) SubChunk2Size: %u\n\n",cabecera.SubChunk2Size);	
+
+	
+
+
+
+	for(i=45;i<cabecera.SubChunk2Size;i++)
+	{
+		read = fread(buf, sizeof(buf),1,fp1);
+		//buf [0] /= 2;
+		read = fwrite(buf, sizeof(buf),1,fp2);
+	}
+	printf("\n");
+	printf("Cerrando archivo original\n");
+	printf("Cerrando archivo modificado\n");
+	fclose(fp1);
+	fclose(fp2);
 }
