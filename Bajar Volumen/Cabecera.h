@@ -1,11 +1,11 @@
 typedef struct CABECERA
 {
-	unsigned char ChunkID[4];			//Contiene las 'RIFF'
+	char ChunkID[4];					//Contiene las 'RIFF'
 	unsigned int ChunkSize;				//Contiene el tamaño total sin contar este y el segmento anterior (8 bytes)
 	unsigned char Format[4];			//Contiene 'WAVE'
 
 	//Aqui comienza el primer subchunk 'fmt'
-	unsigned char SubChunk1ID[4];		//Contiene 'fmt'
+	char SubChunk1ID[4];				//Contiene 'fmt'
 	unsigned int SubChunk1Size;			//Contiene el tamaño del resto de el primer subchunk
 	unsigned int AudioFormat;			//Formato de audio, es es distinto de 1, es forma de compresión
 	unsigned int NumChannels;			//Numero de canales, mono = 1, estereo = 2, etc.
@@ -15,7 +15,7 @@ typedef struct CABECERA
 	unsigned int BitsPerSample;			//8 bits, 16 bits, etc.
 	
 	//Aqui comienza el segundo subchunk 'data'
-	unsigned char SubChunk2ID[4];		//Contiene 'data'
+	char SubChunk2ID[4];				//Contiene 'data'
 	unsigned int SubChunk2Size;			//Numero de bytes en los datos, es decir, bytes despues de este segmento
 	unsigned int data;					//Datos de sonidos reales
 	

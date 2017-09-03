@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 	FILE * archivoEntrada, * archivoSalida;
 	cabecera cab;
 	int i, lectura, escritura;
-	char auxiliar [1];
+	short muestra;
 	char * nombreModificado = (char *) malloc (sizeof (char));
 	char * nombreArch = (char *) malloc (sizeof (char));
 	system ("cls");
@@ -27,12 +27,12 @@ int main(int argc, char const *argv[])
 
 	//Leemos e imprimimos la cabecera del archivo wav
 	leerCabecera (archivoEntrada, archivoSalida, &cab);
-
+	
 	for (i = 0; i < (cab.SubChunk2Size); i ++)
 	{
-		lectura = fread(auxiliar, sizeof (auxiliar), 1, archivoEntrada);
-		auxiliar [0] *= 0.5;												//Dividimos a la mitad cada byte de los datos
-		escritura = fwrite(auxiliar, sizeof (auxiliar), 1, archivoSalida);	//Escribimos los datos nuevos en el archivo
+		lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
+		muestra *= 0.5;																		//Dividimos a la mitad cada byte de los datos
+		escritura = fwrite(&muestra, sizeof (short), lectura, archivoSalida);				//Escribimos los datos nuevos en el archivo
 	}
 	printf ("\n\n");
 	fclose (archivoEntrada);
