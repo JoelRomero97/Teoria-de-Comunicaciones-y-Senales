@@ -4,6 +4,7 @@
 #include "Cabecera.h"
 #define PI 3.14159265
 #define FREC_CORTE 1000
+#define TAM_ARREGLO 20
 
 int i;					//Variable global para manejar ciclos
 
@@ -129,42 +130,32 @@ void leerCabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab)
 	printf("(41-44) SubChunk 2 Size: %u\n\n",cab -> SubChunk2Size);
 }
 
+float * llenaArreglo ()
+{
+	float * entrada = (float *) malloc (sizeof (float) * TAM_ARREGLO);
+	for (i = 0; i < TAM_ARREGLO; i ++)
+		entrada [i] = 0;
+	return entrada;
+}
+
 float * generaImpulso ()
 {
-	float * impulso = (float *) malloc (sizeof (float) * 20);
-	for (i = 0; i < 20; i ++)
+	float * impulso = (float *) malloc (sizeof (float) * TAM_ARREGLO);
+	for (i = 0; i < TAM_ARREGLO; i ++)
 	{
 		impulso [i] = (exp ((-2 * PI * FREC_CORTE * i) / 44100));			//Fórmula de filtro RC con fc = 1,000 Hz
 	}
 	return impulso;
 }
 
-float convolucion (float * entrada, float * impulso, int ciclo)
+float convolucion (float * entrada, float * impulso)
 {
-	float respuesta;
-	float aux, * entradaAux;
-	for (i = 0; i < ciclo; i ++)
-		entradaAux [i] = entrada [i];
-	float * inicio = entradaAux;
-	float * final = &entradaAux [ciclo - 1];
-
-	//Recorremos cliclo - 1 posiciones a la izquierda los elementos
-	for(;inicio <= final;inicio ++, final --)
-	{
-		aux = (* inicio);
-		(* inicio) = (* final);
-		(* final) = aux;
-	}
-
-	//Imprimimos la entrada
-	printf("\n\nENTRADA:\n");
-	for (i = 0; i < ciclo; i ++)
-		printf("%.2f  ", entradaAux [i]);
+	float respuesta = 0;
 
 	//Realizamos la convolución
-	for (i = 0, respuesta = 0; i < ciclo; i ++)
-		if (entradaAux [i] != 0)
-			respuesta += (entradaAux [i] * impulso [i]);
+	for (i = 0; i < TAM_ARREGLO; i ++)
+		if (entrada [i] != 0)
+			respuesta += (entrada [i] * impulso [i]);
 	if (respuesta >= -32767 && respuesta <= 32767)
 		return respuesta;
 	else

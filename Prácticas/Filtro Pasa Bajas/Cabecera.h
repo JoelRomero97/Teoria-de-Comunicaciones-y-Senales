@@ -23,5 +23,6 @@ typedef struct CABECERA
 
 FILE * abreArchivo (char * nombreArch, char * nombreModificado, int tipo);				//Para abrir los archivos de entrada y salida
 void leerCabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab);		//Para copiar e imprimir la cabecera
+float * llenaArreglo ();
 float * generaImpulso ();
-float convolucion (float * entrada, float * impulso, int ciclo);
+float convolucion (float * entrada, float * impulso);

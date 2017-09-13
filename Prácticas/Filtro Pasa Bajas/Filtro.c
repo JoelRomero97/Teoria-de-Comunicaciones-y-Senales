@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "Cabecera.c"
+#define TAM_ARREGLO 20
 
 int main(int argc, char const *argv[])
 {
 	FILE * archivoEntrada, * archivoSalida;
 	cabecera cab;
-	int i, lectura, escritura, j = 0;
+	int i, lectura, escritura, j = 0, k;
 	short muestra;
 	float * impulso = (float *) malloc (sizeof (float) * 20);
 	float * entrada = (float *) malloc (sizeof (float) * 20);
@@ -31,18 +32,19 @@ int main(int argc, char const *argv[])
 
 	//Generamos la respuesta al impulso
 	impulso = generaImpulso ();
+
+	//Llenamos el arreglo de entrada con puros ceros
+	entrada = llenaArreglo ();
 	
 	//Escribimos el resto de los datos realizando la convolución
-	while (j < cab.SubChunk2Size)
+	for (i = 0; i < cab.SubChunk2Size; i ++, j++)
 	{
-		for (i = 0; i < 20; i ++, j++)
-		{
-			lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
-			entrada [i] = muestra;																//Insertamos los datos en el arreglo
-			muestra = convolucion (entrada, impulso, i + 1);
-			printf("\nRESPUESTA A ESCRIBIR: %d\n\n", muestra);
-			escritura = fwrite(&muestra, sizeof (short), lectura, archivoSalida);				//Escribimos los datos nuevos en el archivo
-		}
+		lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
+		for (k = (TAM_ARREGLO - 1); k >= 0; k --)
+			entrada [k] = entrada [k - 1];
+		entrada [0] = muestra;																//Insertamos los datos en el arreglo
+		muestra = convolucion (entrada, impulso);
+		escritura = fwrite(&muestra, sizeof (short), lectura, archivoSalida);				//Escribimos los datos nuevos en el archivo
 	}
 	printf ("\n\n");
 	fclose (archivoEntrada);
