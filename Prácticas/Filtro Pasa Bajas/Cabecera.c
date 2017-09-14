@@ -156,10 +156,9 @@ float convolucion (float * entrada, float * impulso)
 	for (i = 0; i < TAM_ARREGLO; i ++)
 		if (entrada [i] != 0)
 			respuesta += (entrada [i] * impulso [i]);
-	/*if (respuesta >= -32767 && respuesta <= 32767)
-		return respuesta;
-	else
-		return 0;*/
+
+	//Como entran valores entre -1 y 1, comprobamos la respuesta, para saber que enviamos (aun así todos los multiplicamos por 32767 que es
+	//el valor máximo que puede tomar un short)
 	if (respuesta > 1)
 		return (1 * 32767);
 	if (respuesta < -1)

@@ -34,11 +34,7 @@ int main(int argc, char const *argv[])
 	impulso = generaImpulso ();
 	float max = 0;
 	for (i = 0; i < TAM_ARREGLO; i ++)
-	{
-		printf("%.2f  ", impulso [i]);
 		max += (impulso [i] * 32767);
-	}
-	printf("\n\nVALOR MAXIMO: %.4f\n", max);
 
 	//Llenamos el arreglo de entrada con puros ceros
 	entrada = llenaArreglo ();
