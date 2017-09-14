@@ -156,8 +156,14 @@ float convolucion (float * entrada, float * impulso)
 	for (i = 0; i < TAM_ARREGLO; i ++)
 		if (entrada [i] != 0)
 			respuesta += (entrada [i] * impulso [i]);
-	if (respuesta >= -32767 && respuesta <= 32767)
+	/*if (respuesta >= -32767 && respuesta <= 32767)
 		return respuesta;
 	else
-		return 0;
+		return 0;*/
+	if (respuesta > 1)
+		return (1 * 32767);
+	if (respuesta < -1)
+		return (-1 * 32767);
+	else
+		return (respuesta * 32767);
 }
