@@ -27,6 +27,7 @@ int main(int argc, char const *argv[])
 
 	//Leemos e imprimimos la cabecera del archivo wav
 	leerCabecera (archivoEntrada, archivoSalida, &cab);
+	imprimir_cabecera (&cab);
 	
 	for (i = 0; i < (cab.SubChunk2Size); i ++)
 	{
