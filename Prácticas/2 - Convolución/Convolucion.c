@@ -4,6 +4,20 @@
 #include "Cabecera.c"
 #define TAM_ARREGLO 20
 
+////////////////////////////////////////////////////////////////////////////////////////
+////								Convolucion.c 									////
+////																				////
+////																				////
+//// Por medio del uso de la convolución continua, se realiza el análisis para 		////
+//// pasarla al tiempo discreto y poder acondicionar una señal pasando por una 		////
+//// respuesta al impulso muy particular, que es la respuesta de un filtro digital	////
+//// en configuración Pasa - Bajas para cualquier señal que pase por el programa.	////
+//// NOTA: Los archivos generados para prueba, fueron creados con GoldWave.			////
+////																				////
+////																				////
+//// Autor: Romero Gamarra Joel Mauricio											////
+////////////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, char const *argv[])
 {
 	FILE * archivoEntrada, * archivoSalida;

@@ -4,6 +4,19 @@
 #include <string.h>
 #include "Cabecera.c"
 
+////////////////////////////////////////////////////////////////////////////////////////
+////									Volumen.c 									////
+////																				////
+////																				////
+//// Manipulación de un archivo WAV (multimedia), para bajar el volumen del mismo	////
+//// a la mitad por medio del análisis de la cabecera que lo compone y un ciclo para////
+//// recorrer todos los datos que lo componen.										////
+//// NOTA: Los archivos generados para prueba, fueron creados con GoldWave.			////
+////																				////
+////																				////
+//// Autor: Romero Gamarra Joel Mauricio											////
+////////////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, char const *argv[])
 {
 	FILE * archivoEntrada, * archivoSalida;

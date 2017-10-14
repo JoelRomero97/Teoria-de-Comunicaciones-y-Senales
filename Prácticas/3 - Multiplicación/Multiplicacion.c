@@ -4,6 +4,20 @@
 #include "Cabecera.c"
 #define TAM_ARREGLO 20
 
+////////////////////////////////////////////////////////////////////////////////////////
+////								Multiplicacion.c 								////
+////																				////
+////																				////
+//// Multiplicación de 2 señales cualesquiera para generar una nueva señal, sin 	////
+//// embargo la complejidad del mismo, recae en que existen 2 tipos de archivos con ////
+//// 1 y 2 canales, mono y estéreo respectivamente, por lo tanto para estéreo se 	////
+//// debe considerar a la señal del canal 1 como real y al otro como imaginario.	////
+//// NOTA: Los archivos generados para prueba, fueron creados con GoldWave.			////
+////																				////
+////																				////
+//// Autor: Romero Gamarra Joel Mauricio											////
+////////////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, char const *argv[])
 {
 	FILE * archivo_1, *archivo_2, * archivoSalida;
