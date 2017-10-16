@@ -124,7 +124,7 @@ void imprimir_cabecera (cabecera * cab, int tipo)
 		strcpy (formatoArchivo, "Archivo 2");
 	else
 		strcpy (formatoArchivo, "Archivo de Salida");
-	printf ("\n\n\t\t\t%s\n\n\n", formatoArchivo);
+	printf ("\n\n\n\t\t\t\t%s\n", formatoArchivo);
 	printf ("(1-4) Chunk ID: %s\n", cab -> ChunkID);
 	printf ("(5-8) ChunkSize:  %u\n", cab -> ChunkSize);
 	printf ("(9-12) Format: %s\n", cab -> Format);

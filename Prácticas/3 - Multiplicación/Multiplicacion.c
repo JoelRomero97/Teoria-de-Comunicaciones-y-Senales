@@ -77,6 +77,63 @@ int main(int argc, char const *argv[])
 				fwrite (&real1, sizeof (short), 1, archivoSalida);
 			}
 		}
+	}else
+	{
+		if ((cab_1.SubChunk2Size) >= (cab_2.SubChunk2Size))
+		{
+			for (i = 0; i < (cab_1.SubChunk2Size / 4); i ++)
+			{
+				//Guardamos la parte real del número complejo
+				fread (&real1, sizeof (short), 1, archivo_1);
+				real1_1 = (real1 / max);
+				if (i > (cab_2.SubChunk2Size / 2))
+					real2 = 0;
+				else
+					fread (&real2, sizeof (short), 1, archivo_2);
+				real2_1 = (real2 / max);
+
+				//Guardamos la parte imaginaria del número complejo
+				fread (&imaginario1, sizeof (short), 1, archivo_1);
+				imaginario1_1 = (imaginario1 / max);
+				if (i > (cab_2.SubChunk2Size / 2))
+					imaginario2 = 0;
+				else
+					fread (&imaginario2, sizeof (short), 1, archivo_2);
+				imaginario2_1 = (imaginario2 / max);
+
+				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max);
+				imaginario1 = ((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1));
+				fwrite (&real1, sizeof (short), 1, archivoSalida);
+				fwrite (&imaginario1, sizeof (short), 1, archivoSalida);
+			}
+		}else
+		{
+			for (i = 0; i < (cab_2.SubChunk2Size / 4); i ++)
+			{
+				//Guardamos la parte real del número complejo
+				fread (&real1, sizeof (short), 1, archivo_2);
+				real1_1 = (real1 / max);
+				if (i > (cab_2.SubChunk2Size / 2))
+					real2 = 0;
+				else
+					fread (&real2, sizeof (short), 1, archivo_1);
+				real2_1 = (real2 / max);
+
+				//Guardamos la parte imaginaria del número complejo
+				fread (&imaginario1, sizeof (short), 1, archivo_2);
+				imaginario1_1 = (imaginario1 / max);
+				if (i > (cab_2.SubChunk2Size / 2))
+					imaginario2 = 0;
+				else
+					fread (&imaginario2, sizeof (short), 1, archivo_1);
+				imaginario2_1 = (imaginario2 / max);
+
+				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max);
+				imaginario1 = ((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1));
+				fwrite (&real1, sizeof (short), 1, archivoSalida);
+				fwrite (&imaginario1, sizeof (short), 1, archivoSalida);
+			}
+		}
 	}
 	printf ("\n\n");
 	fclose (archivo_1);
