@@ -19,10 +19,10 @@ FILE * abreArchivo (char * archivo1, char * archivo2, char * salida, int tipo)
 		exit (0);
 	}
 
-	archivo_2 = fopen (archivo1,"rb");
+	archivo_2 = fopen (archivo2,"rb");
 	if (archivo_2 == NULL)
 	{
-		printf("Error al abrir archivo '%s'.\n", archivo1);
+		printf("Error al abrir archivo '%s'.\n", archivo2);
 		exit (0);
 	}
 	archivo_salida = fopen (salida,"wb");
