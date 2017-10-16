@@ -17,8 +17,6 @@ typedef struct CABECERA
 	//Aqui comienza el segundo subchunk 'data'
 	char SubChunk2ID[4];				//Contiene 'data'
 	unsigned int SubChunk2Size;			//Numero de bytes en los datos, es decir, bytes despues de este segmento
-	unsigned int data;					//Datos de sonidos reales
-	
 }cabecera;
 
 FILE * abreArchivo (char * nombreArch, char * nombreModificado, int tipo);				//Para abrir los archivos de entrada y salida
