@@ -1,15 +1,15 @@
 # Volumen
 
-Este programa realiza a partir de una entrada de un archivo WAV, la disminución del volumen del mismo a la mitad.
+This program realize from an input in WAV Format File, a decrease in half of the original volume.
 
-# Compilación
+# Compile
 
 gcc Volumen.c -o Volumen
 
-# Ejecución
+# Execute
 
-Volumen.exe Entrada.wav Salida.wav
+Volumen.exe Input.wav Output.wav
 
-# Autor
+# Author
 
 Joel Mauricio Romero Gamarra
