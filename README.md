@@ -1,5 +1,6 @@
-# Teoria-de-Comunicaciones-y-Senales
-Implementaciones en lenguaje C acerca del muestro, acondicionamiento y procesamiento de señales, así como análisis de frecuencias para reconocer vocales
+# Teoría de Comunicaciones y Señales
+
+Implementations in C language of sampling, conditioning and signal processing, as well as frequency analysis to recognize vowels or pressed numbers on a phone
 
 Signals are everywhere, examples of these are: Music, Videos, Electricity, our heart, brain, etc. That's why, is important to understand them how do they work.
 
