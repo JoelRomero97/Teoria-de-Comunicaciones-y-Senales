@@ -10,6 +10,6 @@ gcc Volumen.c -o Volumen
 
 Volumen.exe Entrada.wav Salida.wav
 
-#Autor
+# Autor
 
 Joel Mauricio Romero Gamarra
