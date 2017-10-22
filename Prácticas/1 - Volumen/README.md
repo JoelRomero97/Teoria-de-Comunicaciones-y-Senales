@@ -1,15 +1,15 @@
 # Volumen
 
-This program realize from an input in WAV Format File, a decrease in half of the original volume.
+Este programa realiza el decremento del volumen (adaptable para aumentarlo) de un archivo WAV a la mitad, es un algoritmo demasiado simple, sin embargo es necesario conocer la estructura de un archivo de este estilo y como manejarlo en lenguaje C para futuras aplicaciones.
 
-You can listen the files on "GoldWave", a software included in this repository and observe the input and the output signal.
+Para poder escuchar los audios y/o generar alguna otra señal, se puede utilizar el software "GoldWave" incluido en este repositorio en la sección de "Recursos".
 
-# Compilation and execution
+# Compilación y ejecución
 
 gcc Volumen.c -o Volumen
 
-Volumen.exe Input.wav Output.wav
+Volumen.exe Entrada.wav Salida.wav
 
-# Author
+# Autor
 
 Joel Mauricio Romero Gamarra
