@@ -54,7 +54,7 @@ int main(int argc, char const *argv[])
 			{
 				fread (&real1, sizeof (short), 1, archivo_1);
 				real1_1 = (real1 / max);
-				if (i > (cab_2.SubChunk2Size / 2))
+				if (i >= (cab_2.SubChunk2Size / 2))
 					real2 = 0;
 				else
 					fread (&real2, sizeof (short), 1, archivo_2);
@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
 			{
 				fread (&real1, sizeof (short), 1, archivo_2);
 				real1_1 = (real1 / max);
-				if (i > (cab_1.SubChunk2Size / 2))
+				if (i >= (cab_1.SubChunk2Size / 2))
 					real2 = 0;
 				else
 					fread (&real2, sizeof (short), 1, archivo_1);
@@ -86,12 +86,11 @@ int main(int argc, char const *argv[])
 				//Guardamos la parte real del número complejo
 				fread (&real1, sizeof (short), 1, archivo_1);
 				real1_1 = (real1 / max);
-				if (i > (cab_2.SubChunk2Size / 4))
+				if (i >= (cab_2.SubChunk2Size / 4))
 				{
 					real2 = 0;
 					imaginario2 = 0;
-				}
-				else
+				}else
 				{
 					fread (&real2, sizeof (short), 1, archivo_2);
 					fread (&imaginario2, sizeof (short), 1, archivo_2);
@@ -115,12 +114,11 @@ int main(int argc, char const *argv[])
 				//Guardamos la parte real del número complejo
 				fread (&real1, sizeof (short), 1, archivo_2);
 				real1_1 = (real1 / max);
-				if (i > (cab_1.SubChunk2Size / 4))
+				if (i >= (cab_1.SubChunk2Size / 4))
 				{
 					real2 = 0;
 					imaginario2 = 0;
-				}
-				else
+				}else
 				{
 					fread (&real2, sizeof (short), 1, archivo_1);
 					fread (&imaginario2, sizeof (short), 1, archivo_1);

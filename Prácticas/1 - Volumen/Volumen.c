@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
 	leerCabecera (archivoEntrada, archivoSalida, &cab);
 	imprimir_cabecera (&cab);
 	
-	for (i = 0; i < (cab.SubChunk2Size); i ++)
+	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
 		lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
 		muestra *= 0.5;																		//Dividimos a la mitad cada uno de los datos

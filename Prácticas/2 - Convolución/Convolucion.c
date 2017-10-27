@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 {
 	FILE * archivoEntrada, * archivoSalida;
 	cabecera cab;
-	int i, lectura, escritura, j = 0, k;
+	int i, lectura, escritura, k;
 	short muestra;
 	float * impulso = (float *) malloc (sizeof (float) * 20);
 	float * entrada = (float *) malloc (sizeof (float) * 20);
@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
 	memset (entrada, 0, TAM_ARREGLO);
 	
 	//Escribimos el resto de los datos realizando la convolución
-	for (i = 0; i < cab.SubChunk2Size; i ++, j++)
+	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
 		lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
 		for (k = (TAM_ARREGLO - 1); k >= 0; k --)
