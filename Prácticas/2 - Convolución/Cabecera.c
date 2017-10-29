@@ -38,6 +38,9 @@ FILE * abre_archivo (char * entrada, char * salida, int tipo)
 
 void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 {
+	rewind (entrada);
+	rewind (salida);
+	
 	unsigned char buffer4[4], buffer2 [2];
 
 	//ChunkID 
