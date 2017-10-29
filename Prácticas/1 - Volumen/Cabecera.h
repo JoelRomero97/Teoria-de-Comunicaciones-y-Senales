@@ -2,7 +2,7 @@ typedef struct CABECERA
 {
 	char ChunkID[4];					//Contiene las 'RIFF'
 	int ChunkSize;						//Contiene el tamaño total sin contar este y el segmento anterior (8 bytes)
-	unsigned char Format[4];			//Contiene 'WAVE'
+	char Format[4];						//Contiene 'WAVE'
 
 	//Aqui comienza el primer subchunk 'fmt'
 	char SubChunk1ID[4];				//Contiene 'fmt'
@@ -19,5 +19,6 @@ typedef struct CABECERA
 	int SubChunk2Size;					//Numero de bytes en los datos, es decir, bytes despues de este segmento
 }cabecera;
 
-FILE * abreArchivo (char * nombreArch, char * nombreModificado, int tipo);				//Para abrir los archivos de entrada y salida
-void leerCabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab);		//Para copiar e imprimir la cabecera
+FILE * abre_archivo (char * entrada, char * salida, int tipo);
+void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab);
+void imprimir_cabecera (cabecera * cab);

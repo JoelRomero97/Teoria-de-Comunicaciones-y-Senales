@@ -1,89 +1,92 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Cabecera.h"
 
-FILE * abreArchivo (char * nombreArch, char * nombreModificado, int tipo)
+FILE * abre_archivo (char * entrada, char * salida, int tipo)
 {
 	FILE * pt1, * pt2;
-	pt1 = fopen (nombreArch,"rb");
+	pt1 = fopen (entrada, "rb");
 	if (pt1 == NULL)
 	{
-		printf("Error al abrir archivo '%s'.\n", nombreArch);
+		printf("Error al abrir archivo '%s'.\n", entrada);
 		exit(0);
 	}
 	
 	//Abrimos el archivo a escribir en modo binario	
-	pt2 = fopen (nombreModificado,"wb");
+	pt2 = fopen (salida, "wb");
 	if (pt2 == NULL)
 	{
-		printf("Error al crear el archivo '%s'.\n", nombreModificado);
+		printf("Error al crear el archivo '%s'.\n", salida);
 		exit(1);
 	}
 	if (tipo == 1)
 	{
-		printf("Archivo '%s' abierto correctamente.\n", nombreArch);
+		printf("Archivo '%s' abierto correctamente.\n", entrada);
 		return pt1;
-	}
-	else
+	}else
 	{
-		printf("Archivo '%s' creado correctamente.\n", nombreModificado);
+		printf("Archivo '%s' creado correctamente.\n", salida);
 		return pt2;
 	}
 }
 
-void leerCabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab)
+void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 {
+	rewind (entrada);
+	rewind (salida);
+	
 	//ChunkID 
-	fread(cab -> ChunkID,sizeof(cab -> ChunkID),1,archivoEntrada);
-	fwrite (cab -> ChunkID, sizeof (cab -> ChunkID), 1, archivoSalida);
+	fread (cab -> ChunkID, sizeof (char), 4, entrada);
+	fwrite (cab -> ChunkID, sizeof (char), 4, salida);
 
 	//ChunkSize 
-	fread(&cab -> ChunkSize, sizeof(cab -> ChunkSize),1,archivoEntrada);
-	fwrite(&cab -> ChunkSize, sizeof(cab -> ChunkSize),1,archivoSalida);
-	
+	fread (&cab -> ChunkSize, sizeof (int), 1, entrada);
+	fwrite (&cab -> ChunkSize, sizeof (int), 1, salida);
+
 	//Formato "Fmt"
-	fread(cab -> Format, sizeof(cab -> Format),1,archivoEntrada);
-	fwrite (cab -> Format, sizeof (cab -> Format), 1, archivoSalida);
+	fread (cab -> Format, sizeof (char), 4, entrada);
+	fwrite (cab -> Format, sizeof (char), 4, salida);
 
 	//SubChunk1ID Formato de datos "fmt"
-	fread(cab -> SubChunk1ID,sizeof(cab -> SubChunk1ID),1,archivoEntrada);
-	fwrite (cab -> SubChunk1ID, sizeof (cab -> SubChunk1ID), 1, archivoSalida);
+	fread (cab -> SubChunk1ID, sizeof (char), 4, entrada);
+	fwrite (cab -> SubChunk1ID, sizeof (char), 4, salida);
 
 	//SubChunk1Size
-	fread(&cab -> SubChunk1Size, sizeof(cab -> SubChunk1Size),1,archivoEntrada);
-	fwrite(&cab -> SubChunk1Size, sizeof(cab -> SubChunk1Size),1,archivoSalida);
+	fread (&cab -> SubChunk1Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk1Size, sizeof (int), 1, salida);
 	
 	// Formato de audio
-	fread(&cab -> AudioFormat, sizeof(cab -> AudioFormat),1,archivoEntrada);
-	fwrite(&cab -> AudioFormat, sizeof(cab -> AudioFormat),1,archivoSalida);
+	fread (&cab -> AudioFormat, sizeof (short), 1, entrada);
+	fwrite (&cab -> AudioFormat, sizeof (short), 1, salida);
 	
 	//Canales
-	fread(&cab -> NumChannels, sizeof(cab -> NumChannels),1,archivoEntrada);
-	fwrite(&cab -> NumChannels, sizeof(cab -> NumChannels),1,archivoSalida);
+	fread (&cab -> NumChannels, sizeof (short), 1, entrada);
+	fwrite (&cab -> NumChannels, sizeof (short), 1, salida);
 
 	//SampleRate
-	fread(&cab -> SampleRate, sizeof(cab -> SampleRate),1,archivoEntrada);
-	fwrite(&cab -> SampleRate, sizeof(cab -> SampleRate),1,archivoSalida);
+	fread (&cab -> SampleRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> SampleRate, sizeof (int), 1, salida);
 	
 	//ByteRate
-	fread(&cab -> ByteRate, sizeof(cab -> ByteRate),1,archivoEntrada);
-	fwrite(&cab -> ByteRate, sizeof(cab -> ByteRate),1,archivoSalida);	
+	fread (&cab -> ByteRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> ByteRate, sizeof (int), 1, salida);
 
 	//Block Align
-	fread(&cab -> BlockAlign, sizeof(cab -> BlockAlign),1,archivoEntrada);
-	fwrite(&cab -> BlockAlign, sizeof(cab -> BlockAlign),1,archivoSalida);
-
-	//Bits per Sample
-	fread(&cab -> BitsPerSample, sizeof(cab -> BitsPerSample),1,archivoEntrada);
-	fwrite(&cab -> BitsPerSample, sizeof(cab -> BitsPerSample),1,archivoSalida);
+	fread (&cab -> BlockAlign, sizeof (short), 1, entrada);
+	fwrite (&cab -> BlockAlign, sizeof (short), 1, salida);
 	
+	//Bits per Sample
+	fread (&cab -> BitsPerSample, sizeof (short), 1, entrada);
+	fwrite (&cab -> BitsPerSample, sizeof (short), 1, salida);
+
 	//SubChunk2ID
-	fread(cab -> SubChunk2ID,sizeof(cab -> SubChunk2ID),1,archivoEntrada);
-	fwrite(cab -> SubChunk2ID,sizeof(cab -> SubChunk2ID),1,archivoSalida);
+	fread (cab -> SubChunk2ID, sizeof (char), 4, entrada);	
+	fwrite (cab -> SubChunk2ID, sizeof (char), 4, salida);
 
 	//SubChunk2Size
-	fread(&cab -> SubChunk2Size, sizeof(cab -> SubChunk2Size),1,archivoEntrada);
-	fwrite(&cab -> SubChunk2Size, sizeof(cab -> SubChunk2Size),1,archivoSalida);	
+	fread (&cab -> SubChunk2Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk2Size, sizeof (int), 1, salida);
 }
 
 void imprimir_cabecera (cabecera * cab)

@@ -41,68 +41,57 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	rewind (entrada);
 	rewind (salida);
 	
-	unsigned char buffer4[4], buffer2 [2];
-
 	//ChunkID 
-	fread (cab -> ChunkID, sizeof (cab -> ChunkID), 1, entrada);
-	fwrite (cab -> ChunkID, sizeof (cab -> ChunkID), 1, salida);
+	fread (cab -> ChunkID, sizeof (char), 4, entrada);
+	fwrite (cab -> ChunkID, sizeof (char), 4, salida);
 
 	//ChunkSize 
-	fread (buffer4, sizeof (buffer4), 1, entrada);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab -> ChunkSize = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> ChunkSize, sizeof (int), 1, entrada);
+	fwrite (&cab -> ChunkSize, sizeof (int), 1, salida);
 
 	//Formato "Fmt"
-	fread (cab -> Format, sizeof (cab -> Format), 1, entrada);
-	fwrite (cab -> Format, sizeof (cab -> Format), 1, salida);
+	fread (cab -> Format, sizeof (char), 4, entrada);
+	fwrite (cab -> Format, sizeof (char), 4, salida);
 
 	//SubChunk1ID Formato de datos "fmt"
-	fread (cab -> SubChunk1ID, sizeof (cab -> SubChunk1ID), 1, entrada);
-	fwrite (cab -> SubChunk1ID, sizeof (cab -> SubChunk1ID), 1, salida);
+	fread (cab -> SubChunk1ID, sizeof (char), 4, entrada);
+	fwrite (cab -> SubChunk1ID, sizeof (char), 4, salida);
 
 	//SubChunk1Size
-	fread (buffer4, sizeof (buffer4), 1, entrada);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab -> SubChunk1Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SubChunk1Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk1Size, sizeof (int), 1, salida);
 	
 	// Formato de audio
-	fread (buffer2, sizeof (buffer2), 1, entrada);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab -> AudioFormat = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> AudioFormat, sizeof (short), 1, entrada);
+	fwrite (&cab -> AudioFormat, sizeof (short), 1, salida);
 	
 	//Canales
-	fread (buffer2, sizeof (buffer2), 1, entrada);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab -> NumChannels = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> NumChannels, sizeof (short), 1, entrada);
+	fwrite (&cab -> NumChannels, sizeof (short), 1, salida);
 
 	//SampleRate
-	fread (buffer4, sizeof (buffer4), 1, entrada);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab -> SampleRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SampleRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> SampleRate, sizeof (int), 1, salida);
 	
 	//ByteRate
-	fread (buffer4, sizeof (buffer4), 1, entrada);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab -> ByteRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> ByteRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> ByteRate, sizeof (int), 1, salida);
 
 	//Block Align
-	fread (buffer2, sizeof (buffer2), 1, entrada);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab -> BlockAlign = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> BlockAlign, sizeof (short), 1, entrada);
+	fwrite (&cab -> BlockAlign, sizeof (short), 1, salida);
 	
 	//Bits per Sample
-	fread (buffer2, sizeof (buffer2), 1, entrada);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab -> BitsPerSample = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> BitsPerSample, sizeof (short), 1, entrada);
+	fwrite (&cab -> BitsPerSample, sizeof (short), 1, salida);
 
 	//SubChunk2ID
-	fread (cab -> SubChunk2ID, sizeof (cab -> SubChunk2ID), 1, entrada);	
-	fwrite (cab -> SubChunk2ID, sizeof (cab -> SubChunk2ID), 1, salida);
+	fread (cab -> SubChunk2ID, sizeof (char), 4, entrada);	
+	fwrite (cab -> SubChunk2ID, sizeof (char), 4, salida);
 
 	//SubChunk2Size
-	fread (buffer4, sizeof (buffer4), 1, entrada);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab -> SubChunk2Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SubChunk2Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk2Size, sizeof (int), 1, salida);
 }
 
 void imprimir_cabecera (cabecera * cab)
