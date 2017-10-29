@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "Cabecera.c"
-#define TAM_ARREGLO 20
 
-int main(int argc, char const *argv[])
+int main (int argc, char const *argv[])
 {
 	FILE * archivo_1, *archivo_2, * archivoSalida;
 	cabecera cab_1, cab_2;
-	int i, j;
+	int i;
 	short real1, imaginario1, real2, imaginario2;
 	float max = 32767, real1_1, imaginario1_1, real2_1, imaginario2_1;
 	char * salida = (char *) malloc (sizeof (char));
@@ -28,9 +27,9 @@ int main(int argc, char const *argv[])
 	}
 
 	//Abrimos los archivos en modo binario
-	archivo_1 = abreArchivo (archivo1, archivo2, salida, 1);
-	archivo_2 = abreArchivo (archivo1, archivo2, salida, 2);
-	archivoSalida = abreArchivo (archivo1, archivo2, salida, 3);
+	archivo_1 = abre_archivo (archivo1, archivo2, salida, 1);
+	archivo_2 = abre_archivo (archivo1, archivo2, salida, 2);
+	archivoSalida = abre_archivo (archivo1, archivo2, salida, 3);
 
 	//Leemos e imprimimos la cabecera del archivo wav
 	leer_cabecera (archivo_1, archivo_2, &cab_1, &cab_2);
@@ -38,9 +37,9 @@ int main(int argc, char const *argv[])
 	imprimir_cabecera (&cab_2, 2);
 
 	if ((cab_1.ChunkSize) >= (cab_2.ChunkSize))
-		copiar_cabecera (&cab_1, archivo_1, archivoSalida);
+		copiar_cabecera (archivo_1, archivoSalida, &cab_1);
 	else
-		copiar_cabecera (&cab_2, archivo_2, archivoSalida);
+		copiar_cabecera (archivo_2, archivoSalida, &cab_2);
 
 	fseek (archivoSalida, 44, SEEK_SET);
 	fseek (archivo_1, 44, SEEK_SET);

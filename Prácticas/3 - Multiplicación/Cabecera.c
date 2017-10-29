@@ -1,15 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <string.h>
 #include "Cabecera.h"
-#define PI 3.14159265
-#define FREC_CORTE 1000
-#define TAM_ARREGLO 20
 
 int i;					//Variable global para manejar ciclos
-unsigned char buffer4 [4], buffer2 [2];
 
-FILE * abreArchivo (char * archivo1, char * archivo2, char * salida, int tipo)
+FILE * abre_archivo (char * archivo1, char * archivo2, char * salida, int tipo)
 {
 	FILE * archivo_1, * archivo_2, * archivo_salida;
 	archivo_1 = fopen (archivo1,"rb");
@@ -44,75 +40,57 @@ void leer_cabecera (FILE * archivo1, FILE * archivo2, cabecera * cab1, cabecera 
 	rewind (archivo1);
 	rewind (archivo2);
 
-	//ChunkID 
-	fread (cab1 -> ChunkID, sizeof (cab1 -> ChunkID), 1, archivo1);
-	fread (cab2 -> ChunkID, sizeof (cab2 -> ChunkID), 1, archivo2);
+	//ChunkID
+	fread (cab1 -> ChunkID, sizeof (char), 4, archivo1);
+	fread (cab2 -> ChunkID, sizeof (char), 4, archivo2);
 
 	//ChunkSize 
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	cab1 -> ChunkSize = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	fread (buffer4, sizeof (buffer4), 1, archivo2);
-	cab2 -> ChunkSize = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab1 -> ChunkSize, sizeof (int), 1, archivo1);
+	fread (&cab2 -> ChunkSize, sizeof (int), 1, archivo2);
 
 	//Formato "Fmt"
-	fread (cab1 -> Format, sizeof (cab1 -> Format), 1, archivo1);
-	fread (cab2 -> Format, sizeof (cab2 -> Format), 1, archivo2);
+	fread (cab1 -> Format, sizeof (char), 4, archivo1);
+	fread (cab2 -> Format, sizeof (char), 4, archivo2);
 
 	//SubChunk1ID Formato de datos "fmt"
-	fread (cab1 -> SubChunk1ID, sizeof (cab1 -> SubChunk1ID), 1, archivo1);
-	fread (cab2 -> SubChunk1ID, sizeof (cab2 -> SubChunk1ID), 1, archivo2);
+	fread (cab1 -> SubChunk1ID, sizeof (char), 4, archivo1);
+	fread (cab2 -> SubChunk1ID, sizeof (char), 4, archivo2);
 
 	//SubChunk1Size
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	cab1 -> SubChunk1Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	fread (buffer4, sizeof (buffer4), 1, archivo2);
-	cab2 -> SubChunk1Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab1 -> SubChunk1Size, sizeof (int), 1, archivo1);
+	fread (&cab2 -> SubChunk1Size, sizeof (int), 1, archivo2);
 	
 	// Formato de audio
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	cab1 -> AudioFormat = (buffer2 [0] | (buffer2 [1] << 8));
-	fread (buffer2, sizeof (buffer2), 1, archivo2);
-	cab2 -> AudioFormat = (buffer2 [0] | (buffer2 [1] << 8));
-	
+	fread (&cab1 -> AudioFormat, sizeof (short), 1, archivo1);
+	fread (&cab2 -> AudioFormat, sizeof (short), 1, archivo2);
+
 	//Canales
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	cab1 -> NumChannels = (buffer2 [0] | (buffer2 [1] << 8));
-	fread (buffer2, sizeof (buffer2), 1, archivo2);
-	cab2 -> NumChannels = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab1 -> NumChannels, sizeof (short), 1, archivo1);
+	fread (&cab2 -> NumChannels, sizeof (short), 1, archivo2);
 
 	//SampleRate
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	cab1 -> SampleRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	fread (buffer4, sizeof (buffer4), 1, archivo2);
-	cab2 -> SampleRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	
+	fread (&cab1 -> SampleRate, sizeof (int), 1, archivo1);
+	fread (&cab2 -> SampleRate, sizeof (int), 1, archivo2);
+
 	//ByteRate
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	cab1 -> ByteRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	fread (buffer4, sizeof (buffer4), 1, archivo2);
-	cab2 -> ByteRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab1 -> ByteRate, sizeof (int), 1, archivo1);
+	fread (&cab2 -> ByteRate, sizeof (int), 1, archivo2);
 
 	//Block Align
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	cab1 -> BlockAlign = (buffer2 [0] | (buffer2 [1] << 8));
-	fread (buffer2, sizeof (buffer2), 1, archivo2);
-	cab2 -> BlockAlign = (buffer2 [0] | (buffer2 [1] << 8));
-	
+	fread (&cab1 -> BlockAlign, sizeof (short), 1, archivo1);
+	fread (&cab2 -> BlockAlign, sizeof (short), 1, archivo2);
+
 	//Bits per Sample
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	cab1 -> BitsPerSample = (buffer2 [0] | (buffer2 [1] << 8));
-	fread (buffer2, sizeof (buffer2), 1, archivo2);
-	cab2 -> BitsPerSample = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab1 -> BitsPerSample, sizeof (short), 1, archivo1);
+	fread (&cab2 -> BitsPerSample, sizeof (short), 1, archivo2);
 
 	//SubChunk2ID
-	fread (cab1 -> SubChunk2ID, sizeof (cab1 -> SubChunk2ID), 1, archivo1);	
-	fread (cab2 -> SubChunk2ID, sizeof (cab2 -> SubChunk2ID), 1, archivo2);
+	fread (cab1 -> SubChunk2ID, sizeof (char), 4, archivo1);
+	fread (cab2 -> SubChunk2ID, sizeof (char), 4, archivo2);
 
 	//SubChunk2Size
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	cab1 -> SubChunk2Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
-	fread (buffer4, sizeof (buffer4), 1, archivo2);
-	cab2 -> SubChunk2Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab1 -> SubChunk2Size, sizeof (int), 1, archivo1);
+	fread (&cab2 -> SubChunk2Size, sizeof (int), 1, archivo2);
 }
 
 void imprimir_cabecera (cabecera * cab, int tipo)
@@ -146,69 +124,60 @@ void imprimir_cabecera (cabecera * cab, int tipo)
 	printf ("(41-44) SubChunk 2 Size: %u\n", cab -> SubChunk2Size);
 }
 
-void copiar_cabecera (cabecera * cab1, FILE * archivo1, FILE * salida)
+void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 {
-	rewind (archivo1);
+	rewind (entrada);
 	rewind (salida);
+	
+	//ChunkID 
+	fread (cab -> ChunkID, sizeof (char), 4, entrada);
+	fwrite (cab -> ChunkID, sizeof (char), 4, salida);
 
-	//ChunkID
-	fread (cab1 -> ChunkID, sizeof (cab1 -> ChunkID), 1, archivo1);
-	fwrite (cab1 -> ChunkID, sizeof (cab1 -> ChunkID), 1, salida);
-
-	//ChunkSize
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab1 -> ChunkSize = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	//ChunkSize 
+	fread (&cab -> ChunkSize, sizeof (int), 1, entrada);
+	fwrite (&cab -> ChunkSize, sizeof (int), 1, salida);
 
 	//Formato "Fmt"
-	fread (cab1 -> Format, sizeof (cab1 -> Format), 1, archivo1);
-	fwrite (cab1 -> Format, sizeof (cab1 -> Format), 1, salida);
+	fread (cab -> Format, sizeof (char), 4, entrada);
+	fwrite (cab -> Format, sizeof (char), 4, salida);
 
 	//SubChunk1ID Formato de datos "fmt"
-	fread (cab1 -> SubChunk1ID, sizeof (cab1 -> SubChunk1ID), 1, archivo1);
-	fwrite (cab1 -> SubChunk1ID, sizeof (cab1 -> SubChunk1ID), 1, salida);
+	fread (cab -> SubChunk1ID, sizeof (char), 4, entrada);
+	fwrite (cab -> SubChunk1ID, sizeof (char), 4, salida);
 
 	//SubChunk1Size
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab1 -> SubChunk1Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SubChunk1Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk1Size, sizeof (int), 1, salida);
 	
 	// Formato de audio
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab1 -> AudioFormat = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> AudioFormat, sizeof (short), 1, entrada);
+	fwrite (&cab -> AudioFormat, sizeof (short), 1, salida);
 	
 	//Canales
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab1 -> NumChannels = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> NumChannels, sizeof (short), 1, entrada);
+	fwrite (&cab -> NumChannels, sizeof (short), 1, salida);
 
 	//SampleRate
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab1 -> SampleRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SampleRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> SampleRate, sizeof (int), 1, salida);
 	
 	//ByteRate
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab1 -> ByteRate = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> ByteRate, sizeof (int), 1, entrada);
+	fwrite (&cab -> ByteRate, sizeof (int), 1, salida);
 
 	//Block Align
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab1 -> BlockAlign = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> BlockAlign, sizeof (short), 1, entrada);
+	fwrite (&cab -> BlockAlign, sizeof (short), 1, salida);
 	
 	//Bits per Sample
-	fread (buffer2, sizeof (buffer2), 1, archivo1);
-	fwrite (buffer2, sizeof (buffer2), 1, salida);
-	cab1 -> BitsPerSample = (buffer2 [0] | (buffer2 [1] << 8));
+	fread (&cab -> BitsPerSample, sizeof (short), 1, entrada);
+	fwrite (&cab -> BitsPerSample, sizeof (short), 1, salida);
 
 	//SubChunk2ID
-	fread (cab1 -> SubChunk2ID, sizeof (cab1 -> SubChunk2ID), 1, archivo1);
-	fwrite (cab1 -> SubChunk2ID, sizeof (cab1 -> SubChunk2ID), 1, salida);
+	fread (cab -> SubChunk2ID, sizeof (char), 4, entrada);
+	fwrite (cab -> SubChunk2ID, sizeof (char), 4, salida);
 
 	//SubChunk2Size
-	fread (buffer4, sizeof (buffer4), 1, archivo1);
-	fwrite (buffer4, sizeof (buffer4), 1, salida);
-	cab1 -> SubChunk2Size = (buffer4 [0] | (buffer4 [1] << 8) | (buffer4 [2] << 16) | (buffer4 [3] << 24));
+	fread (&cab -> SubChunk2Size, sizeof (int), 1, entrada);
+	fwrite (&cab -> SubChunk2Size, sizeof (int), 1, salida);
 }
