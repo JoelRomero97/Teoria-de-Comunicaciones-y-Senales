@@ -11,7 +11,6 @@
 //// siendo un algoritmo extremadamente costoso computacionalmente, para observar	////
 //// alguna señal en el dominio de la frecuencia, su magnitud y su fase.			////
 ////																				////
-////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
 ////////////////////////////////////////////////////////////////////////////////////////
 
