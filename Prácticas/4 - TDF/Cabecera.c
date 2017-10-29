@@ -38,6 +38,8 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 {
 	rewind (entrada);
 	rewind (salida);
+
+	short archivo_stereo = 2;
 	
 	//ChunkID 
 	fread (cab -> ChunkID, sizeof (char), 4, entrada);
@@ -63,9 +65,9 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	fread (&cab -> AudioFormat, sizeof (short), 1, entrada);
 	fwrite (&cab -> AudioFormat, sizeof (short), 1, salida);
 	
-	//Canales
+	//Canales (POR LA NATURALEZA DEL PROBLEMA, SIEMPRE DEBEN SER 2 CANALES)
 	fread (&cab -> NumChannels, sizeof (short), 1, entrada);
-	fwrite (&cab -> NumChannels, sizeof (short), 1, salida);
+	fwrite (&archivo_stereo, sizeof (short), 1, salida);
 
 	//SampleRate
 	fread (&cab -> SampleRate, sizeof (int), 1, entrada);
@@ -101,13 +103,13 @@ void imprimir_cabecera (cabecera * cab)
 	printf("(13-16) SubChunk 1 ID: %s\n",cab -> SubChunk1ID);
 	printf("(17-20) SubChunk 1 Size: %u\n",cab -> SubChunk1Size);
 	if (cab -> AudioFormat == 1)
-			strcpy(formatoArchivo,"PCM");
-		printf("(21-22) Audio Format: %u,%s\n",cab -> AudioFormat,formatoArchivo);
+		strcpy(formatoArchivo,"PCM");
+	printf("(21-22) Audio Format: %u,%s\n",cab -> AudioFormat,formatoArchivo);
 	if (cab -> NumChannels == 1)
 			strcpy(formatoArchivo,"Mono");
 		else 
 			strcpy(formatoArchivo,"Stereo");
-		printf("(23-24) Number of Channels: %u, Tipo: %s\n",cab -> NumChannels,formatoArchivo);
+	printf("(23-24) Number of Channels: %u, Tipo: %s\n",cab -> NumChannels,formatoArchivo);
 	printf("(25-28) Sample Rate: %u\n",cab -> SampleRate);
 	printf("(29-32) Byte Rate: %u BitRate: %u\n",cab -> ByteRate,cab -> ByteRate*8);
 	printf("(33-34) Block Align: %u\n",cab -> BlockAlign);

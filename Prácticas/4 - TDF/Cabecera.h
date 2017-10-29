@@ -22,3 +22,4 @@ typedef struct CABECERA
 FILE * abre_archivo (char * entrada, char * salida, int tipo);
 void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab);
 void imprimir_cabecera (cabecera * cab);
+

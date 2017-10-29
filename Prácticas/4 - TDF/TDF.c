@@ -19,18 +19,20 @@ int main(int argc, char const *argv[])
 	FILE * entrada, * salida;
 	cabecera cab;
 	short muestra;
+	int opcion_seleccionada;
 	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
 	system ("cls");
-	if (argc < 3)
+	if (argc < 4)
 	{
 		printf("Error, faltan argumentos.\n");
-		printf ("Ejemplo: '%s Archivo1.wav Salida.wav'\n\n", argv [0]);
+		printf ("Ejemplo: '%s -1 Archivo1.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
 	}else
 	{
-		archivo_entrada = (char *) argv [1];
-		archivo_salida = (char *) argv [2];
+		opcion_seleccionada = atoi (argv [1]);
+		archivo_entrada = (char *) argv [2];
+		archivo_salida = (char *) argv [3];
 	}
 
 	//Abrimos los archivos en modo binario
