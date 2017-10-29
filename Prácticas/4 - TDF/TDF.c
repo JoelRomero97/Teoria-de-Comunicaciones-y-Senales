@@ -10,12 +10,6 @@
 //// Implementación de la Transformada Discreta de Fourier utilizando la fórmula, 	////
 //// siendo un algoritmo extremadamente costoso computacionalmente, para observar	////
 //// alguna señal en el dominio de la frecuencia, su magnitud y su fase.			////
-//// La opción 1 de la TDF mostrará en el canal izquierdo la señal original y en el ////
-//// derecho, la magnitud de la TDF.												////
-//// En la opción 2, mostrará en el canal izquierdo la parte real de la TDF y en el ////
-//// derecho, la parte imaginaria de la TDF.										////
-//// En la opción 3, mostrará en el canal izquierdo la magnitud de la TDF y en el 	////
-//// derecho, la fase de la TDF.													////
 ////																				////
 ////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
