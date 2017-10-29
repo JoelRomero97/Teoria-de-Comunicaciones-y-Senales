@@ -27,8 +27,7 @@ int main(int argc, char const *argv[])
 		printf("Error, faltan argumentos.\n");
 		printf ("Ejemplo: '%s Archivo1.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
-	}
-	else
+	}else
 	{
 		archivo_entrada = (char *) argv [1];
 		archivo_salida = (char *) argv [2];
