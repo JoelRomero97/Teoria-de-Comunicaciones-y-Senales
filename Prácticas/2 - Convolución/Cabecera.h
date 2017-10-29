@@ -19,7 +19,8 @@ typedef struct CABECERA
 	unsigned int SubChunk2Size;			//Numero de bytes en los datos, es decir, bytes despues de este segmento
 }cabecera;
 
-FILE * abreArchivo (char * nombreArch, char * nombreModificado, int tipo);				//Para abrir los archivos de entrada y salida
-void leerCabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab);		//Para copiar e imprimir la cabecera
+FILE * abre_archivo (char * entrada, char * salida, int tipo);
+void copiar_cabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab);
+void imprimir_cabecera (cabecera * cab);
 float * generaImpulso ();
 float convolucion (float * entrada, float * impulso);

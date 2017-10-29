@@ -20,33 +20,32 @@
 
 int main(int argc, char const *argv[])
 {
-	FILE * archivoEntrada, * archivoSalida;
+	FILE * entrada, * salida;
 	cabecera cab;
-	int i, lectura, escritura, k;
+	int i, k;
 	short muestra;
 	float * impulso = (float *) malloc (sizeof (float) * 20);
-	float * entrada = (float *) malloc (sizeof (float) * 20);
-	char * nombreModificado = (char *) malloc (sizeof (char));
-	char * nombreArch = (char *) malloc (sizeof (char));
+	float * signal = (float *) malloc (sizeof (float) * 20);
+	char * archivo_salida = (char *) malloc (sizeof (char));
+	char * archivo_entrada = (char *) malloc (sizeof (char));
 	system ("cls");
 	if (argc < 3)
 	{
 		printf("Error, faltan argumentos.\n");
 		printf ("Ejemplo: '%s Archivo1.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
-	}
-	else
+	}else
 	{
-		nombreArch = (char *) argv [1];
-		nombreModificado = (char *) argv [2];
+		archivo_entrada = (char *) argv [1];
+		archivo_salida = (char *) argv [2];
 	}
 
 	//Abrimos los archivos en modo binario
-	archivoEntrada = abreArchivo (nombreArch, nombreModificado,1);
-	archivoSalida = abreArchivo (nombreArch, nombreModificado, 2);
+	entrada = abre_archivo (archivo_entrada, archivo_salida,1);
+	salida = abre_archivo (archivo_entrada, archivo_salida, 2);
 
 	//Leemos e imprimimos la cabecera del archivo wav
-	leerCabecera (archivoEntrada, archivoSalida, &cab);
+	copiar_cabecera (entrada, salida, &cab);
 	imprimir_cabecera (&cab);
 
 	//Generamos la respuesta al impulso
@@ -56,21 +55,21 @@ int main(int argc, char const *argv[])
 		max += (impulso [i] * 32767);
 
 	//Llenamos el arreglo de entrada con puros ceros
-	memset (entrada, 0, TAM_ARREGLO);
+	memset (signal, 0, TAM_ARREGLO);
 	
 	//Escribimos el resto de los datos realizando la convolución
 	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
-		lectura = fread(&muestra, sizeof (short), 1, archivoEntrada);
+		fread (&muestra, sizeof (short), 1, entrada);
 		for (k = (TAM_ARREGLO - 1); k >= 0; k --)
-			entrada [k] = entrada [k - 1];
-		entrada [0] = (muestra / max);																//Insertamos los datos en el arreglo
-		muestra = convolucion (entrada, impulso);
-		escritura = fwrite(&muestra, sizeof (short), lectura, archivoSalida);				//Escribimos los datos nuevos en el archivo
+			signal [k] = signal [k - 1];
+		signal [0] = (muestra / max);									//Insertamos los datos en el arreglo
+		muestra = convolucion (signal, impulso);
+		fwrite (&muestra, sizeof (short), 1, salida);					//Escribimos los datos nuevos en el archivo
 	}
 	printf ("\n\n");
-	fclose (archivoEntrada);
-	fclose (archivoSalida);
-	printf ("Archivo '%s' filtrado correctamente.\n", nombreArch);
+	fclose (entrada);
+	fclose (salida);
+	printf ("Archivo '%s' filtrado correctamente guardado en '%s'.\n", archivo_entrada, archivo_salida);
 	return 0;
 }
