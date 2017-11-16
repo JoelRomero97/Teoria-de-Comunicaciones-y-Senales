@@ -67,6 +67,7 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	
 	//Canales (POR LA NATURALEZA DEL PROBLEMA, SIEMPRE DEBEN SER 2 CANALES)
 	fread (&cab -> NumChannels, sizeof (short), 1, entrada);
+	//fwrite (&cab -> NumChannels, sizeof (short), 1, salida);
 	fwrite (&archivo_stereo, sizeof (short), 1, salida);
 
 	//SampleRate

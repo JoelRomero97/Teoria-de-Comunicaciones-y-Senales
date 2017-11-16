@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
 	FILE * entrada, * salida;
 	cabecera cab;
 	short muestra;
-	int opcion_seleccionada;
+	int opcion_seleccionada, i;
 	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
 	system ("cls");
@@ -42,6 +42,12 @@ int main(int argc, char const *argv[])
 	//Leemos e imprimimos la cabecera del archivo wav
 	copiar_cabecera (entrada, salida, &cab);
 	imprimir_cabecera (&cab);
+
+	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
+	{
+		fread (&muestra, sizeof (short), 1, entrada);
+		fwrite (&muestra, sizeof (short), 1, salida);
+	}
 
 	printf ("\n\n");
 	fclose (entrada);
