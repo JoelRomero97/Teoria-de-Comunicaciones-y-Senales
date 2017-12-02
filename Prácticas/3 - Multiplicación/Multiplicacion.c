@@ -58,7 +58,7 @@ int main (int argc, char const *argv[])
 				else
 					fread (&real2, sizeof (short), 1, archivo_2);
 				real2_1 = (real2 / max);
-				real1 = (real1_1 * real2_1 * max);
+				real1 = (real1_1 * real2_1 * max / 2);
 				fwrite (&real1, sizeof (short), 1, archivoSalida);
 			}
 		}else
@@ -72,7 +72,7 @@ int main (int argc, char const *argv[])
 				else
 					fread (&real2, sizeof (short), 1, archivo_1);
 				real2_1 = (real2 / max);
-				real1 = (real1_1 * real2_1 * max);
+				real1 = (real1_1 * real2_1 * max / 2);
 				fwrite (&real1, sizeof (short), 1, archivoSalida);
 			}
 		}
@@ -101,8 +101,8 @@ int main (int argc, char const *argv[])
 				imaginario1_1 = (imaginario1 / max);
 				imaginario2_1 = (imaginario2 / max);
 
-				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max);
-				imaginario1 = (((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1)) * max);
+				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max / 2);
+				imaginario1 = (((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1)) * max / 2);
 				fwrite (&real1, sizeof (short), 1, archivoSalida);
 				fwrite (&imaginario1, sizeof (short), 1, archivoSalida);
 			}
@@ -129,8 +129,8 @@ int main (int argc, char const *argv[])
 				imaginario1_1 = (imaginario1 / max);
 				imaginario2_1 = (imaginario2 / max);
 
-				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max);
-				imaginario1 = (((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1)) * max);
+				real1 = (((real1_1 * real2_1) - (imaginario1_1 * imaginario2_1)) * max / 2);
+				imaginario1 = (((real1_1 * imaginario2_1) + (imaginario1_1 * real2_1)) * max / 2);
 				fwrite (&real1, sizeof (short), 1, archivoSalida);
 				fwrite (&imaginario1, sizeof (short), 1, archivoSalida);
 			}
