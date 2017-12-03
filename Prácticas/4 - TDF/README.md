@@ -1,6 +1,6 @@
 # TDF
 
-# NOTA: PRÁCTICA COMPLETA, SIN EMBARGO, EL CÓDIGO SE SUBIRÁ AL CONCLUIR EL SEMESTRE PARA QUE NO LO VUELVAN A COPIAR XD
+# NOTA: PRÁCTICA COMPLETA, SIN EMBARGO, EL CÓDIGO SE SUBIRÁ AL CONCLUIR EL SEMESTRE PARA QUE NO LO VUELVAN A COPIAR (ELIOTH) XD
 
 En este programa, se realiza la implementación de la Transformada Discreta de Fourier en C para poder observar una señal en el dominio de la frecuencia y poder comenzar a hacer el análisis para reconocer vocales o algún otro sonido por medio de sus frecuencias y picos por analizados con un diagrama de Bode.
 
