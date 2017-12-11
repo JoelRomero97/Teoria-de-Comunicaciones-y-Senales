@@ -129,8 +129,7 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 	int k, n;
 	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
 	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
-	short * real = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
-	short * imaginario = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * new_signal = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	float parte_real, parte_imaginaria, angulo;
 	
 	for (k = 0; k < muestras; k ++)
@@ -158,10 +157,13 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		//Calculamos la magnitud de cada coeficiente de la TDF
 		magnitud [k] = sqrt ((parte_real + parte_imaginaria));
 
-		//Volvemos a dimensionar los valores de la señal y de la magnitud para escribirlos
+		//Volvemos a dimensionar los valores de la magnitud para escribirlos
 		magnitud [k] = (magnitud [k] * max);
-		signal [k] = (signal [k] * max);
 	}
+
+	//Redimensionamos el tamaño de la señal original para hacer la escritura
+	for (k = 0; k < muestras; k ++)
+		new_signal [k] = (signal [k] * max);
 
 	//Avanzamos el apuntador al archivo para evitar errores
 	fseek (salida, 44, SEEK_SET);
@@ -169,7 +171,10 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 	//PARA ESCRIBIR LOS DATOS
 	for (i = 0; i < muestras; i ++)
 	{
-		fwrite (&signal [i], sizeof (short), 1, salida);
+		//Escribimos en el canal izquierdo la señal original
+		fwrite (&new_signal [i], sizeof (short), 1, salida);
+
+		//Escribimos en el canal derecho la magnitud de la TDF
 		fwrite (&magnitud [i], sizeof (short), 1, salida);
 	}	
 }
@@ -178,7 +183,6 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 {
 	int k, n;
 	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
-	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	short * real = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	short * imaginario = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	float parte_real, parte_imaginaria, angulo;
@@ -219,3 +223,58 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 		fwrite (&imaginario [i], sizeof (short), 1, salida);
 	}
 }
+
+/*void opcion_tres (FILE * salida, float * signal, cabecera * cab)
+{
+	int k, n;
+	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
+	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * fase = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	float parte_real, parte_imaginaria, angulo;
+	
+	for (k = 0; k < muestras; k ++)
+	{
+		//Se resetean los valores de la parte real e imaginaria en 0
+		parte_real = 0;
+		parte_imaginaria = 0;
+		for (n = 0; n < muestras; n ++)
+		{
+			//Se calcula el angulo definido
+			angulo = ((2 * PI * k * n) / muestras);
+
+			//Se calculan las partes real e imaginaria de la TDF
+			parte_real += (signal [n] * (cos (angulo)));
+			parte_imaginaria += (signal [n] * sin (angulo));
+		}
+		//Se vuelven a dividir los coeficientes de la TDF entre el numero de muestras para tener valores entre 0 y 1
+		parte_real = (parte_real / muestras);
+		parte_imaginaria = (parte_imaginaria / muestras);
+
+		//Calculamos la fase de la TDF (como cualquier número complejo Z)
+		if (parte_real == 0)
+
+		//Calculamos el cuadrado de la parte real y de la parte imaginaria
+		parte_real = pow (parte_real, 2);
+		parte_imaginaria = pow (parte_imaginaria, 2);
+
+		//Calculamos la magnitud de cada coeficiente de la TDF
+		magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+
+		//Volvemos a dimensionar los valores de la señal y de la magnitud para escribirlos
+		magnitud [k] = (magnitud [k] * max);
+		fase [k] = (fase [k] * max);
+	}
+
+	//Avanzamos el apuntador al archivo para evitar errores
+	fseek (salida, 44, SEEK_SET);
+	
+	//PARA ESCRIBIR LOS DATOS
+	for (i = 0; i < muestras; i ++)
+	{
+		//Escribimos en el canal izquierdo la señal original
+		fwrite (&fase [i], sizeof (short), 1, salida);
+
+		//Escribimos en el canal derecho la magnitud de la TDF
+		fwrite (&magnitud [i], sizeof (short), 1, salida);
+	}	
+}*/
