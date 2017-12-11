@@ -151,9 +151,15 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		parte_real = (parte_real / muestras);
 		parte_imaginaria = (parte_imaginaria / muestras);
 
-		//Volvemos a dimensionar los valores de la señal a escribir
-		real [k] = (parte_real * max);
-		imaginario [k] = (parte_imaginaria * -1 * max);
+		//Calculamos el cuadrado de la parte real y de la parte imaginaria
+		parte_real = pow (parte_real, 2);
+		parte_imaginaria = pow (parte_imaginaria, 2);
+
+		//Calculamos la magnitud de cada coeficiente de la TDF
+		magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+
+		//Volvemos a dimensionar los valores de la señal y de la magnitud para escribirlos
+		magnitud [k] = (magnitud [k] * max);
 		signal [k] = (signal [k] * max);
 	}
 

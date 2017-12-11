@@ -23,3 +23,4 @@ FILE * abre_archivo (char * entrada, char * salida, int tipo);
 void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab);
 void imprimir_cabecera (cabecera * cab);
 void opcion_uno (FILE * salida, float * signal, cabecera * cab);
+void opcion_dos (FILE * salida, float * signal, cabecera * cab);

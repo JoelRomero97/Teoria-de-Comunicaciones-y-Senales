@@ -46,7 +46,6 @@ int main(int argc, char const *argv[])
 
 	float * signal = (float *) malloc (sizeof (float) * (cab.SubChunk2Size / 2));
 
-	printf ("\n\n\n");
 	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
@@ -57,6 +56,8 @@ int main(int argc, char const *argv[])
 	//AQUI VA EL ALGORITMO DE LA TRANSFORMADA
 	if (opcion_seleccionada == -1)
 		opcion_uno (salida, signal, &cab);
+	else if (opcion_seleccionada == -2)
+		opcion_dos (salida, signal, &cab);
 	printf ("\n\n");
 	fclose (entrada);
 	fclose (salida);
