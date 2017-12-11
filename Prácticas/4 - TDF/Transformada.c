@@ -20,6 +20,7 @@ int main(int argc, char const *argv[])
 	cabecera cab;
 	short muestra;
 	int opcion_seleccionada, i;
+	float max = 32767;
 	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
 	system ("cls");
@@ -43,12 +44,19 @@ int main(int argc, char const *argv[])
 	copiar_cabecera (entrada, salida, &cab);
 	imprimir_cabecera (&cab);
 
+	float * signal = (float *) malloc (sizeof (float) * (cab.SubChunk2Size / 2));
+
+	printf ("\n\n\n");
 	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
-		fwrite (&muestra, sizeof (short), 1, salida);
+		signal [i] = (muestra / max);
 	}
 
+
+	//AQUI VA EL ALGORITMO DE LA TRANSFORMADA
+	if (opcion_seleccionada == -1)
+		opcion_uno (salida, signal, &cab);
 	printf ("\n\n");
 	fclose (entrada);
 	fclose (salida);

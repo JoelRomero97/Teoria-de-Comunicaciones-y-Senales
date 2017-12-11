@@ -40,6 +40,7 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	rewind (salida);
 
 	short archivo_stereo = 2;
+	int n1;
 	
 	//ChunkID 
 	fread (cab -> ChunkID, sizeof (char), 4, entrada);
@@ -47,7 +48,8 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 
 	//ChunkSize 
 	fread (&cab -> ChunkSize, sizeof (int), 1, entrada);
-	fwrite (&cab -> ChunkSize, sizeof (int), 1, salida);
+	n1 = (cab -> ChunkSize * 2);
+	fwrite (&n1, sizeof (int), 1, salida);
 
 	//Formato "Fmt"
 	fread (cab -> Format, sizeof (char), 4, entrada);
@@ -76,11 +78,13 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	
 	//ByteRate
 	fread (&cab -> ByteRate, sizeof (int), 1, entrada);
-	fwrite (&cab -> ByteRate, sizeof (int), 1, salida);
+	n1 = (cab -> ByteRate * 2);
+	fwrite (&n1, sizeof (int), 1, salida);
 
 	//Block Align
 	fread (&cab -> BlockAlign, sizeof (short), 1, entrada);
-	fwrite (&cab -> BlockAlign, sizeof (short), 1, salida);
+	n1 = (cab -> BlockAlign * 2);
+	fwrite (&n1, sizeof (short), 1, salida);
 	
 	//Bits per Sample
 	fread (&cab -> BitsPerSample, sizeof (short), 1, entrada);
@@ -92,7 +96,8 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 
 	//SubChunk2Size
 	fread (&cab -> SubChunk2Size, sizeof (int), 1, entrada);
-	fwrite (&cab -> SubChunk2Size, sizeof (int), 1, salida);
+	n1 = (cab -> SubChunk2Size * 2);
+	fwrite (&n1, sizeof (int), 1, salida);
 }
 
 void imprimir_cabecera (cabecera * cab)
@@ -117,4 +122,46 @@ void imprimir_cabecera (cabecera * cab)
 	printf("(35-36) Bits Per Sample: %u\n",cab -> BitsPerSample);
 	printf("(37-40) SubChunk 2 ID: %s\n",cab -> SubChunk2ID);
 	printf("(41-44) SubChunk 2 Size: %u\n",cab -> SubChunk2Size);
+}
+
+void opcion_uno (FILE * salida, float * signal, cabecera * cab)
+{
+	int k, n;
+	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
+	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * real = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * imaginario = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	float parte_real, parte_imaginaria, angulo;
+	
+	for (k = 0; k < muestras; k ++)
+	{
+		//Se resetean los valores de la parte real e imaginaria en 0
+		parte_real = 0;
+		parte_imaginaria = 0;
+		for (n = 0; n < muestras; n ++)
+		{
+			angulo = ((2 * PI * k * n) / muestras);
+			parte_real += (signal [n] * (cos (angulo)));
+			parte_imaginaria += (signal [n] * sin (angulo));
+		}
+		parte_real = (parte_real / muestras);
+		parte_imaginaria = (parte_imaginaria / muestras);
+		real [k] = (parte_real * max);
+		imaginario [k] = (parte_imaginaria * -1 * max);
+		//real [k] = (parte_real / muestras);
+		//imaginario [k] = (parte_imaginaria * -1 / muestras); 
+		//printf("Muestra %d: %.4f + %.4fj\n", k, real [k], imaginario [k]);
+		printf("Muestra %d: %.4f + %.4fj\n", k, parte_real, parte_imaginaria * -1);
+	}
+	fseek (salida, 44, SEEK_SET);
+	
+	//PARA ESCRIBIR LOS DATOS
+	for (i = 0; i < muestras; i ++)
+	{
+		//fwrite (&signal [i], sizeof (short), 1, salida);
+		//fwrite (&magnitud [i], sizeof (short), 1, salida);
+		fwrite (&real [i], sizeof (short), 1, salida);
+		fwrite (&imaginario [i], sizeof (short), 1, salida);
+	}
+	
 }
