@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
 	imprimir_cabecera (&cab);
 
 	float * signal = (float *) malloc (sizeof (float) * (cab.SubChunk2Size / 2));
-printf ("\n\n");
+	printf ("\n\n");
 	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
@@ -57,9 +57,16 @@ printf ("\n\n");
 		opcion_uno (salida, signal, &cab);
 	else if (opcion_seleccionada == -2)
 		opcion_dos (salida, signal, &cab);
+	else if (opcion_seleccionada == -3)
+		opcion_tres (salida, signal, &cab);
+	else
+	{
+		printf ("\nOpcion invalida :(");
+		exit (0);
+	}
 	printf ("\n\n");
 	fclose (entrada);
 	fclose (salida);
-	printf ("Se aplico la transformada discreta de fourier al archivo '%s' correctamente.\n", archivo_entrada);
+	printf ("Se aplico la transformada discreta de fourier al archivo '%s' correctamente (Opcion %d).\n", archivo_entrada, opcion_seleccionada);
 	return 0;
 }
