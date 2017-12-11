@@ -140,18 +140,20 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		parte_imaginaria = 0;
 		for (n = 0; n < muestras; n ++)
 		{
+			//Se calcula el angulo definido
 			angulo = ((2 * PI * k * n) / muestras);
+
+			//Se calculan las partes real e imaginaria de la TDF
 			parte_real += (signal [n] * (cos (angulo)));
 			parte_imaginaria += (signal [n] * sin (angulo));
 		}
+		//Se vuelven a dividir los coeficientes de la TDF entre el numero de muestras para tener valores entre 0 y 1
 		parte_real = (parte_real / muestras);
 		parte_imaginaria = (parte_imaginaria / muestras);
+
+		//Volvemos a dimensionar los valores de la señal a escribir
 		real [k] = (parte_real * max);
 		imaginario [k] = (parte_imaginaria * -1 * max);
-		//real [k] = (parte_real / muestras);
-		//imaginario [k] = (parte_imaginaria * -1 / muestras); 
-		//printf("Muestra %d: %.4f + %.4fj\n", k, real [k], imaginario [k]);
-		printf("Muestra %d: %.4f + %.4fj\n", k, parte_real, parte_imaginaria * -1);
 	}
 	fseek (salida, 44, SEEK_SET);
 	
