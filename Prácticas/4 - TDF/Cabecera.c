@@ -154,16 +154,62 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		//Volvemos a dimensionar los valores de la señal a escribir
 		real [k] = (parte_real * max);
 		imaginario [k] = (parte_imaginaria * -1 * max);
+		signal [k] = (signal [k] * max);
 	}
+
+	//Avanzamos el apuntador al archivo para evitar errores
 	fseek (salida, 44, SEEK_SET);
 	
 	//PARA ESCRIBIR LOS DATOS
 	for (i = 0; i < muestras; i ++)
 	{
-		//fwrite (&signal [i], sizeof (short), 1, salida);
-		//fwrite (&magnitud [i], sizeof (short), 1, salida);
+		fwrite (&signal [i], sizeof (short), 1, salida);
+		fwrite (&magnitud [i], sizeof (short), 1, salida);
+	}	
+}
+
+void opcion_dos (FILE * salida, float * signal, cabecera * cab)
+{
+	int k, n;
+	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
+	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * real = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	short * imaginario = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
+	float parte_real, parte_imaginaria, angulo;
+	
+	for (k = 0; k < muestras; k ++)
+	{
+		//Se resetean los valores de la parte real e imaginaria en 0
+		parte_real = 0;
+		parte_imaginaria = 0;
+		for (n = 0; n < muestras; n ++)
+		{
+			//Se calcula el angulo definido
+			angulo = ((2 * PI * k * n) / muestras);
+
+			//Se calculan las partes real e imaginaria de la TDF
+			parte_real += (signal [n] * (cos (angulo)));
+			parte_imaginaria += (signal [n] * sin (angulo));
+		}
+		//Se vuelven a dividir los coeficientes de la TDF entre el numero de muestras para tener valores entre 0 y 1
+		parte_real = (parte_real / muestras);
+		parte_imaginaria = (parte_imaginaria / muestras);
+
+		//Volvemos a dimensionar los valores de la señal a escribir
+		real [k] = (parte_real * max);
+		imaginario [k] = (parte_imaginaria * -1 * max);
+	}
+
+	//Avanzamos el apuntador al archivo para evitar errores
+	fseek (salida, 44, SEEK_SET);
+	
+	//PARA ESCRIBIR LOS DATOS
+	for (i = 0; i < muestras; i ++)
+	{
+		//Escribimos en el canal izquierdo la parte real de la TDF
 		fwrite (&real [i], sizeof (short), 1, salida);
+
+		//Escribimos en el canal derecho la parte imaginaria de la TDF
 		fwrite (&imaginario [i], sizeof (short), 1, salida);
 	}
-	
 }
