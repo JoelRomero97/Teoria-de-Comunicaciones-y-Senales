@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include "MedirTiempo/tiempo.c"
 #include "Cabecera.h"
 #define PI 3.14159265
 
 int i;					//Variable global para manejar ciclos
+double utime0, stime0, wtime0, utime1, stime1, wtime1;
 
 FILE * abre_archivo (char * entrada, char * salida, int tipo)
 {
@@ -24,14 +27,9 @@ FILE * abre_archivo (char * entrada, char * salida, int tipo)
 		exit(1);
 	}
 	if (tipo == 1)
-	{
-		printf("Archivo '%s' abierto correctamente.\n", entrada);
 		return pt1;
-	}else
-	{
-		printf("Archivo '%s' creado correctamente.\n", salida);
+	else
 		return pt2;
-	}
 }
 
 void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
@@ -100,30 +98,6 @@ void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab)
 	fwrite (&n1, sizeof (int), 1, salida);
 }
 
-void imprimir_cabecera (cabecera * cab)
-{
-	char * formatoArchivo = (char *) malloc (sizeof (char));
-	printf("\n\n\n(1-4) Chunk ID: %s\n",cab -> ChunkID);
-	printf("(5-8) ChunkSize:  %u\n",cab -> ChunkSize);
-	printf("(9-12) Format: %s\n",cab -> Format);
-	printf("(13-16) SubChunk 1 ID: %s\n",cab -> SubChunk1ID);
-	printf("(17-20) SubChunk 1 Size: %u\n",cab -> SubChunk1Size);
-	if (cab -> AudioFormat == 1)
-		strcpy(formatoArchivo,"PCM");
-	printf("(21-22) Audio Format: %u,%s\n",cab -> AudioFormat,formatoArchivo);
-	if (cab -> NumChannels == 1)
-			strcpy(formatoArchivo,"Mono");
-		else 
-			strcpy(formatoArchivo,"Stereo");
-	printf("(23-24) Number of Channels: %u, Tipo: %s\n",cab -> NumChannels,formatoArchivo);
-	printf("(25-28) Sample Rate: %u\n",cab -> SampleRate);
-	printf("(29-32) Byte Rate: %u BitRate: %u\n",cab -> ByteRate,cab -> ByteRate*8);
-	printf("(33-34) Block Align: %u\n",cab -> BlockAlign);
-	printf("(35-36) Bits Per Sample: %u\n",cab -> BitsPerSample);
-	printf("(37-40) SubChunk 2 ID: %s\n",cab -> SubChunk2ID);
-	printf("(41-44) SubChunk 2 Size: %u\n",cab -> SubChunk2Size);
-}
-
 void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 {
 	int k, n;
@@ -131,7 +105,9 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	short * new_signal = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	float parte_real, parte_imaginaria, angulo, modulo;
-	
+
+	//Se comienza a tomar tiempo
+	uswtime (&utime0, &stime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		//Se resetean los valores de la parte real e imaginaria en 0
@@ -165,6 +141,8 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		//Volvemos a dimensionar los valores de la magnitud para escribirlos
 		magnitud [k] = (modulo * max);
 	}
+	uswtime (&utime1, &stime1, &wtime1);
+	calculaTiempo (utime0, stime0, wtime0, utime1, stime1, wtime1, muestras, 1);
 
 	//Redimensionamos el tamaño de la señal original para hacer la escritura
 	for (k = 0; k < muestras; k ++)
@@ -191,7 +169,8 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 	short * real = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	short * imaginario = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	float parte_real, parte_imaginaria, angulo;
-	
+
+	uswtime (&utime0, &stime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		//Se resetean los valores de la parte real e imaginaria en 0
@@ -214,6 +193,8 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 		real [k] = (parte_real * max);
 		imaginario [k] = (parte_imaginaria * -1 * max);
 	}
+	uswtime (&utime1, &stime1, &wtime1);
+	calculaTiempo (utime0, stime0, wtime0, utime1, stime1, wtime1, muestras, 2);
 
 	//Avanzamos el apuntador al archivo para evitar errores
 	fseek (salida, 44, SEEK_SET);
@@ -236,7 +217,8 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 	short * magnitud = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	short * fase = (short *) malloc (sizeof (short) * (cab -> SubChunk2Size / 2));
 	float parte_real, parte_imaginaria, angulo, fase_float, modulo;
-	
+
+	uswtime (&utime0, &stime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		//Se resetean los valores de la parte real e imaginaria en 0
@@ -303,6 +285,8 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 		magnitud [k] = (modulo * max);
 		fase [k] = (fase_float * max);
 	}
+	uswtime (&utime1, &stime1, &wtime1);
+	calculaTiempo (utime0, stime0, wtime0, utime1, stime1, wtime1, muestras, 3);
 
 	//Avanzamos el apuntador al archivo para evitar errores
 	fseek (salida, 44, SEEK_SET);
@@ -316,4 +300,25 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 		//Escribimos en el canal izquierdo la señal original
 		fwrite (&fase [i], sizeof (short), 1, salida);
 	}	
+}
+
+void calculaTiempo (double utime0, double stime0, double wtime0, double utime1, double stime1, double wtime1, int n, int opcion)
+{
+	char * option = (char *) malloc (sizeof (char));
+	switch (opcion)
+	{
+		case 1:
+			strcpy (option, "Opcion 1");
+			break;
+		case 2:
+			strcpy (option, "Opcion 2");
+			break;
+		case 3:
+			strcpy (option, "Opcion 3");
+			break;
+	}
+	printf("Tiempo con la %s para un archivo de %d muestras:\n\n", option, n);
+	printf("Tiempo total:  %.10f s\n",  wtime1 - wtime0);
+	printf("Tiempo de procesamiento en CPU: %.10f s\n",  utime1 - utime0);
+	printf ("________________________________________________________________________________________________________________________");
 }

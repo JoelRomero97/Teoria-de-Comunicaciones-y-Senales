@@ -21,7 +21,7 @@ typedef struct CABECERA
 
 FILE * abre_archivo (char * entrada, char * salida, int tipo);
 void copiar_cabecera (FILE * entrada, FILE * salida, cabecera * cab);
-void imprimir_cabecera (cabecera * cab);
 void opcion_uno (FILE * salida, float * signal, cabecera * cab);
 void opcion_dos (FILE * salida, float * signal, cabecera * cab);
 void opcion_tres (FILE * salida, float * signal, cabecera * cab);
+void calculaTiempo (double utime0, double stime0, double wtime0, double utime1, double stime1, double wtime1, int n, int opcion);
