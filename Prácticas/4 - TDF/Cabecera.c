@@ -150,12 +150,17 @@ void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 		parte_real = (parte_real / muestras);
 		parte_imaginaria = (parte_imaginaria / muestras);
 
-		//Calculamos el cuadrado de la parte real y de la parte imaginaria
-		parte_real = pow (parte_real, 2);
-		parte_imaginaria = pow (parte_imaginaria, 2);
+		if ((parte_real == 0) && (parte_imaginaria == 0))
+			magnitud [k] = 0;
+		else
+		{
+			//Calculamos el cuadrado de la parte real y de la parte imaginaria
+			parte_real = pow (parte_real, 2);
+			parte_imaginaria = pow (parte_imaginaria, 2);
 
-		//Calculamos la magnitud de cada coeficiente de la TDF
-		magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+			//Calculamos la magnitud de cada coeficiente de la TDF
+			magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+		}
 
 		//Volvemos a dimensionar los valores de la magnitud para escribirlos
 		magnitud [k] = (magnitud [k] * max);
@@ -224,7 +229,7 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 	}
 }
 
-/*void opcion_tres (FILE * salida, float * signal, cabecera * cab)
+void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 {
 	int k, n;
 	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
@@ -251,16 +256,43 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 		parte_imaginaria = (parte_imaginaria / muestras);
 
 		//Calculamos la fase de la TDF (como cualquier número complejo Z)
-		if (parte_real == 0)
+		//Si tanto la parte real como la parte imaginaria son 0, la magnitud es 0 al igual que la fase
+		if ((parte_real == 0) && (parte_imaginaria == 0))
+		{
+			magnitud [k] = 0;
+			fase [k] = 0;
+		}else
+		{
+			//Calculamos el cuadrado de la parte real y de la parte imaginaria
+			parte_real = pow (parte_real, 2);
+			parte_imaginaria = pow (parte_imaginaria, 2);
 
-		//Calculamos el cuadrado de la parte real y de la parte imaginaria
-		parte_real = pow (parte_real, 2);
-		parte_imaginaria = pow (parte_imaginaria, 2);
+			//Calculamos la magnitud de cada coeficiente de la TDF
+			magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+		}
+		//Si el angulo solo vive en el eje imaginario negativo
+		if ((parte_real == 0) && (parte_imaginaria < 0))
+		{
+			fase [k] = (- PI / 2);
+		//Si el angulo solo vive en el eje imaginario positivo
+		}else if ((parte_real == 0) && (parte_imaginaria > 0))
+		{
+			fase [k] = (PI / 2);
+		//Si el angulo solo vive en el eje real negativo
+		}else if ((parte_real < 0) && (parte_imaginaria >= 0))
+		{
+			//Si vive en el eje real negativo o positivo
+			fase [k] = (atan (parte_imaginaria / parte_real) + PI);
+		}else if ((parte_real < 0) && (parte_imaginaria < 0))
+		{
+			//Si el eje real e imaginario son negativos
+			fase [k] = (atan (parte_imaginaria / parte_real) - PI);
+		}
 
-		//Calculamos la magnitud de cada coeficiente de la TDF
-		magnitud [k] = sqrt ((parte_real + parte_imaginaria));
+		//Dividimos entre el valor máximo que puede tomar un arctan
+		fase [k] = (fase [k] / PI);
 
-		//Volvemos a dimensionar los valores de la señal y de la magnitud para escribirlos
+		//Volvemos a dimensionar los valores de la magnitud para escribirlos
 		magnitud [k] = (magnitud [k] * max);
 		fase [k] = (fase [k] * max);
 	}
@@ -277,4 +309,4 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 		//Escribimos en el canal derecho la magnitud de la TDF
 		fwrite (&magnitud [i], sizeof (short), 1, salida);
 	}	
-}*/
+}
