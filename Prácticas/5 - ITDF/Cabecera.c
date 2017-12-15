@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-//#include <sys/resource.h>
-//#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/time.h>
 #include "Cabecera.h"
 #define PI 3.14159265
 
@@ -41,7 +41,7 @@ void transformada_inversa (FILE * salida, short * re, short * im, cabecera * cab
 	double real, imaginario, angulo;
 	numero_muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
 	fseek (salida, 44, SEEK_SET);
-	//uswtime (&utime0, &wtime0);
+	uswtime (&utime0, &wtime0);
 	for (n = 0; n < numero_muestras; n ++)
 	{
 		real = 0;
@@ -59,26 +59,25 @@ void transformada_inversa (FILE * salida, short * re, short * im, cabecera * cab
 		fwrite (&parte_real, sizeof (short), 1, salida);
 		fwrite (&parte_imaginaria, sizeof (short), 1, salida);
 	}
-	//uswtime (&utime1, &wtime1);
-	//calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 1);
+	uswtime (&utime1, &wtime1);
+	calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras);
 }
 
-void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
+void uswtime (double * usertime, double * walltime)
 {
-	char * option = (char *) malloc (sizeof (char));
-	switch (opcion)
-	{
-		case 1:
-			strcpy (option, "Opcion 1");
-			break;
-		case 2:
-			strcpy (option, "Opcion 2");
-			break;
-		case 3:
-			strcpy (option, "Opcion 3");
-			break;
-	}
-	printf("Tiempo con la %s para un archivo de %d muestras:\n\n", option, n);
+	double mega = 1.0e-6;
+	struct rusage buffer;
+	struct timeval tp;
+	struct timezone tzp;
+	getrusage (RUSAGE_SELF, &buffer);
+	gettimeofday (&tp, &tzp);
+	*usertime = (double) buffer.ru_utime.tv_sec +1.0e-6 * buffer.ru_utime.tv_usec;
+	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
+}
+
+void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n)
+{
+	printf("Tiempo con la Transformada Inversa de Fourier para un archivo de %d muestras:\n\n", n);
 	printf("Tiempo total:  %.10f s\n",  wtime1 - wtime0);
 	printf("Tiempo de procesamiento en CPU: %.10f s\n",  utime1 - utime0);
 	printf ("________________________________________________________________________________________________________________________");

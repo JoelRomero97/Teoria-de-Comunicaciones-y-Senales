@@ -22,4 +22,4 @@ typedef struct CABECERA
 void imprimir_cabecera (cabecera * cab);
 void transformada_inversa (FILE * salida, short * re, short * im, cabecera * cab);
 void uswtime (double * usertime, double * walltime);
-void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion);
+void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n);
