@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
 	salida = fopen (archivo_salida, "wb");
 	if (salida == NULL)
 	{
-		printf ("Error al abrir el archivo '%s'", archivo_salida);
+		printf ("Error al crear el archivo '%s'", archivo_salida);
 		exit (0);
 	}
 
