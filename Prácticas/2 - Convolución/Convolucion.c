@@ -80,9 +80,9 @@ int main(int argc, char const *argv[])
 		fread (&muestra, sizeof (short), 1, entrada);
 		for (k = (TAM_ARREGLO - 1); k >= 0; k --)
 			signal [k] = signal [k - 1];
-		signal [0] = (muestra / max);									//Insertamos los datos en el arreglo
+		signal [0] = (muestra / max);
 		muestra = convolucion (signal, impulso);
-		fwrite (&muestra, sizeof (short), 1, salida);					//Escribimos los datos nuevos en el archivo
+		fwrite (&muestra, sizeof (short), 1, salida);
 	}
 	printf ("\n\n");
 	fclose (entrada);

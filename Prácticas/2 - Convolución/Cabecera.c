@@ -36,7 +36,8 @@ float * generar_impulso ()
 	float * impulso = (float *) malloc (sizeof (float) * TAM_ARREGLO);
 	for (i = 0; i < TAM_ARREGLO; i ++)
 	{
-		impulso [i] = (exp ((-2 * PI * FREC_CORTE * i) / 44100));			//Fórmula de filtro RC con fc = 1,000 Hz
+		//Fórmula de filtro RC con fc = 1,000 Hz
+		impulso [i] = (exp ((-2 * PI * FREC_CORTE * i) / 44100));
 	}
 	return impulso;
 }
@@ -45,14 +46,9 @@ float convolucion (float * entrada, float * impulso)
 {
 	int i;
 	float respuesta = 0;
-
-	//Realizamos la convolución
 	for (i = 0; i < TAM_ARREGLO; i ++)
 		if (entrada [i] != 0)
 			respuesta += (entrada [i] * impulso [i]);
-
-	//Como entran valores entre -1 y 1, comprobamos la respuesta, para saber que enviamos (aun así todos los multiplicamos por 32767 que es
-	//el valor máximo que puede tomar un short)
 	if (respuesta > 1)
 		return (1 * 32767);
 	if (respuesta < -1)
