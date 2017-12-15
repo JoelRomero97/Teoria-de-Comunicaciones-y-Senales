@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <sys/resource.h>
-#include <sys/time.h>
+//#include <sys/resource.h>
+//#include <sys/time.h>
 #include "Cabecera.h"
 #define PI 3.14159265
 
@@ -41,24 +41,26 @@ void transformada_inversa (FILE * salida, short * re, short * im, cabecera * cab
 	double real, imaginario, angulo;
 	numero_muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
 	fseek (salida, 44, SEEK_SET);
-	uswtime (&utime0, &wtime0);
-	for (k = 0; k < numero_muestras; k ++)
+	//uswtime (&utime0, &wtime0);
+	for (n = 0; n < numero_muestras; n ++)
 	{
 		real = 0;
 		imaginario = 0;
-		for (n = 0; n < (numero_muestras / 2); n ++)
+		for (k = 0; k < numero_muestras; k ++)
 		{
 			angulo = ((2 * PI * k * n) / numero_muestras);
-			real += ((re [n] * cos (angulo)) - (im [n] * sin (angulo)));
-			imaginario += ((im [n] * cos (angulo)) + (re [n] * sin (angulo)));
+			real += ((re [k] * cos (angulo)) - (im [k] * sin (angulo)));
+			imaginario += ((im [k] * cos (angulo)) + (re [k] * sin (angulo)));
 		}
-		parte_real = (real * 2);
-		parte_imaginaria = (imaginario * 2);
+		parte_real = (real / numero_muestras);
+		parte_real = (parte_real * numero_muestras);
+		parte_imaginaria = (imaginario / numero_muestras);
+		parte_imaginaria = (parte_imaginaria * numero_muestras);
 		fwrite (&parte_real, sizeof (short), 1, salida);
 		fwrite (&parte_imaginaria, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 1);
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 1);
 }
 
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
