@@ -175,7 +175,7 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 	}	
 }
 
-/*void uswtime (double * usertime, double * walltime)
+void uswtime (double * usertime, double * walltime)
 {
 	double mega = 1.0e-6;
 	struct rusage buffer;
@@ -185,7 +185,7 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 	gettimeofday (&tp, &tzp);
 	*usertime = (double) buffer.ru_utime.tv_sec +1.0e-6 * buffer.ru_utime.tv_usec;
 	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
-}*/
+}
 
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
 {
