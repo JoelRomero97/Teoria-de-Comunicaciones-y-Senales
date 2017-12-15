@@ -36,7 +36,7 @@ void imprimir_cabecera (cabecera * cab)
 void opcion_uno (FILE * salida, float * signal, cabecera * cab)
 {
 	int i, k, n;
-	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
+	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
 	short * magnitud = (short *) malloc (sizeof (short) * muestras);
 	short * original = (short *) malloc (sizeof (short) * muestras);
 	float parte_real, parte_imaginaria, angulo, modulo;
@@ -118,7 +118,7 @@ void opcion_dos (FILE * salida, float * signal, cabecera * cab)
 void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 {
 	int i, k, n;
-	float max = 32767, muestras = ((cab -> SubChunk2Size) / 2);
+	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
 	short * magnitud = (short *) malloc (sizeof (short) * muestras);
 	short * fase = (short *) malloc (sizeof (short) * muestras);
 	float parte_real, parte_imaginaria, angulo, fase_float, modulo;
