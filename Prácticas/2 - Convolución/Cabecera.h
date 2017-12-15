@@ -9,9 +9,9 @@ typedef struct CABECERA
 	int SubChunk1Size;					//Contiene el tamaño del resto de el primer subchunk
 	short AudioFormat;					//Formato de audio, es es distinto de 1, es forma de compresión
 	short NumChannels;					//Numero de canales, mono = 1, estereo = 2, etc.
-	int SampleRate;						//8000, 44100, etc.
+	int SampleRate;						//Frecuencia de muestreo
 	int ByteRate;						//(SampleRate * Numero canales * Bits per Sample) / 8
-	short BlockAlign;					//(Numero canales * Bits per Sample) / 8
+	short BlockAlign;					//Bytes por muestra: (Numero canales * Bits per Sample) / 8
 	short BitsPerSample;				//8 bits, 16 bits, etc.
 	
 	//Aqui comienza el segundo subchunk 'data'
@@ -19,8 +19,6 @@ typedef struct CABECERA
 	int SubChunk2Size;					//Numero de bytes en los datos, es decir, bytes despues de este segmento
 }cabecera;
 
-FILE * abre_archivo (char * entrada, char * salida, int tipo);
-void copiar_cabecera (FILE * archivoEntrada, FILE * archivoSalida, cabecera * cab);
 void imprimir_cabecera (cabecera * cab);
-float * generaImpulso ();
+float * generar_impulso ();
 float convolucion (float * entrada, float * impulso);

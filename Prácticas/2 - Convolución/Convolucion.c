@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "Cabecera.c"
+#include "Cabecera.h"
 #define TAM_ARREGLO 20
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -12,7 +12,9 @@
 //// pasarla al tiempo discreto y poder acondicionar una señal pasando por una 		////
 //// respuesta al impulso muy particular, que es la respuesta de un filtro digital	////
 //// en configuración Pasa - Bajas para cualquier señal que pase por el programa.	////
-//// NOTA: Los archivos generados para prueba, fueron creados con GoldWave.			////
+//// Compilación: gcc Cabecera.c -o Cabecera.o -c 									////
+////			  gcc Convolucion.c -o Convolucion Cabecera.o						////
+//// Ejecuación: Convolucion.exe Entrada.wav Salida.wav								////
 ////																				////
 ////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
@@ -22,7 +24,7 @@ int main(int argc, char const *argv[])
 {
 	FILE * entrada, * salida;
 	cabecera cab;
-	int i, k;
+	int i, k, numero_muestras;
 	short muestra;
 	float * impulso = (float *) malloc (sizeof (float) * 20);
 	float * signal = (float *) malloc (sizeof (float) * 20);
@@ -41,24 +43,39 @@ int main(int argc, char const *argv[])
 	}
 
 	//Abrimos los archivos en modo binario
-	entrada = abre_archivo (archivo_entrada, archivo_salida,1);
-	salida = abre_archivo (archivo_entrada, archivo_salida, 2);
+	entrada = fopen (archivo_entrada, "rb");
+	if (entrada == NULL)
+	{
+		printf ("Error al abrir el archivo '%s'", archivo_entrada);
+		exit (0);
+	}
+	salida = fopen (archivo_salida, "wb");
+	if (salida == NULL)
+	{
+		printf ("Error al abrir el archivo '%s'", archivo_salida);
+		exit (0);
+	}
 
-	//Leemos e imprimimos la cabecera del archivo wav
-	copiar_cabecera (entrada, salida, &cab);
+	//Copiar la cabecera del archivo de entrada al de salida
+	fread (&cab, 44, 1, entrada);
+	fwrite (&cab, 44, 1, salida);
+
+	//Imprimir los valores de la cabecera
 	imprimir_cabecera (&cab);
 
 	//Generamos la respuesta al impulso
-	impulso = generaImpulso ();
+	impulso = generar_impulso ();
 	float max = 0;
 	for (i = 0; i < TAM_ARREGLO; i ++)
 		max += (impulso [i] * 32767);
 
 	//Llenamos el arreglo de entrada con puros ceros
 	memset (signal, 0, TAM_ARREGLO);
+
+	numero_muestras = (cab.SubChunk2Size / cab.BlockAlign);
 	
 	//Escribimos el resto de los datos realizando la convolución
-	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
+	for (i = 0; i < numero_muestras; i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
 		for (k = (TAM_ARREGLO - 1); k >= 0; k --)
@@ -70,6 +87,5 @@ int main(int argc, char const *argv[])
 	printf ("\n\n");
 	fclose (entrada);
 	fclose (salida);
-	printf ("Archivo '%s' filtrado correctamente guardado en '%s'.\n", archivo_entrada, archivo_salida);
 	return 0;
 }
