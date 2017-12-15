@@ -4,9 +4,12 @@ Este programa realiza un filtrado de una señal en el dominio de la frecuencia, 
 
 NOTA: El costo del algoritmo que realiza la convolución es demasiado alto, esto puede ser optimizado utilizando la transformada Z (tanto en memoria como en número de operaciones).
 
-# Compilación y ejecución
+# Compilación
 
-gcc Convolucion.c -o Convolucion
+- gcc Cabecera.c -o Cabecera.o -c
+- gcc Convolucion.c -o Convolucion Cabecera.o
+
+# Ejecución
 
 Convolucion.exe Archivo_Original.wav Archivo_Filtrado.wav
 
