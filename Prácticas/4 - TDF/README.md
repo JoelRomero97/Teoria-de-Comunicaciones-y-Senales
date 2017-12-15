@@ -6,18 +6,23 @@ NOTA: El costo del algoritmo que realiza la TDF es demasiado alto, esto será op
 
 # Compilación
 
-gcc TDF.c -o TDF
+- gcc Cabecera.c -o Cabecera.o -c
+- gcc TDF.c -o TDF Cabecera.o
 
 # Ejecución
 
 - Opción 1: Muestra en el canal izquierdo la señal original y en el canal derecho la magnitud de la TDF
-  - TDF.exe -1 Entrada.wav Salida.wav
+  - ./TDF -1 Entrada.wav Salida.wav
 
 - Opción 2: Muestra en el canal izquierdo la parte real y en el canal derecho la parte imaginaria de la TDF
-  - TDF.exe -2 Entrada.wav Salida.wav
+  - ./TDF -2 Entrada.wav Salida.wav
 
 - Opción 3: Muestra en el canal izquierdo la magnitud y en el canal derecho la fase de la TDF
-  - TDF.exe -3 Entrada.wav Salida.wav
+  - ./TDF -3 Entrada.wav Salida.wav
+
+# Nota
+
+Si se desea ejecutar el programa en Windows, deben comentarse las librerías sys/resource.h y sys/time.h, además, comentar las funciones uswtime y calculaTiempo.
 
 # Autor
 
