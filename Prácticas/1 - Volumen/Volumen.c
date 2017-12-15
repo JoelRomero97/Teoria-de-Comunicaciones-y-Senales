@@ -1,16 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "Cabecera.c"
+#include "Cabecera.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////									Volumen.c 									////
 ////																				////
 ////																				////
-//// Manipulación de un archivo WAV (multimedia), para bajar el volumen del mismo	////
+//// Manipulación de un archivo wav (multimedia), para bajar el volumen del mismo	////
 //// a la mitad por medio del análisis de la cabecera que lo compone y un ciclo para////
 //// recorrer todos los datos que lo componen.										////
-//// NOTA: Los archivos generados para prueba, fueron creados con GoldWave.			////
+//// Compilación: gcc Cabecera.c -o Cabecera.o -c 									////
+////			  gcc Volumen.c -o Volumen Cabecera.o								////
+//// Ejecuación: Volumen.exe Entrada.wav Salida.wav									////
 ////																				////
 ////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
@@ -20,10 +22,10 @@ int main(int argc, char const *argv[])
 {
 	FILE * entrada, * salida;
 	cabecera cab;
-	int i;
+	int i, numero_muestras;
 	short muestra;
-	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
+	char * archivo_salida = (char *) malloc (sizeof (char));
 	system ("cls");
 	if (argc < 3)
 	{
@@ -37,22 +39,36 @@ int main(int argc, char const *argv[])
 	}
 
 	//Abrimos los archivos en modo binario
-	entrada = abre_archivo (archivo_entrada, archivo_salida, 1);
-	salida = abre_archivo (archivo_entrada, archivo_salida, 2);
+	entrada = fopen (archivo_entrada, "rb");
+	if (entrada == NULL)
+	{
+		printf ("Error al abrir el archivo '%s'", archivo_entrada);
+		exit (0);
+	}
+	salida = fopen (archivo_salida, "wb");
+	if (salida == NULL)
+	{
+		printf ("Error al abrir el archivo '%s'", archivo_salida);
+		exit (0);
+	}
 
-	//Leemos e imprimimos la cabecera del archivo wav
-	copiar_cabecera (entrada, salida, &cab);
+	//Copiar la cabecera del archivo de entrada al de salida
+	fread (&cab, 44, 1, entrada);
+	fwrite (&cab, 44, 1, salida);
+
+	//Imprimir los valores de la cabecera
 	imprimir_cabecera (&cab);
+
+	numero_muestras = (cab.SubChunk2Size / cab.BlockAlign);
 	
-	for (i = 0; i < (cab.SubChunk2Size / 2); i ++)
+	for (i = 0; i < numero_muestras; i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
-		muestra *= 0.5;														//Dividimos a la mitad cada uno de los datos
+		muestra *= 0.5;												//Dividimos a la mitad cada uno de los datos
 		fwrite (&muestra, sizeof (short), 1, salida);				//Escribimos los datos nuevos en el archivo
 	}
 	printf ("\n\n");
 	fclose (entrada);
 	fclose (salida);
-	printf ("Archivo '%s' filtrado correctamente.\n", archivo_entrada);
 	return 0;
 }
