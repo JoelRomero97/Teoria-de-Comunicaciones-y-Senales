@@ -93,60 +93,41 @@ void opcion_tres (FILE * salida, short * signal, cabecera * cab)
 {
 	int i, k, n;
 	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
-	short * magnitud = (short *) malloc (sizeof (short) * muestras);
-	short * fase = (short *) malloc (sizeof (short) * muestras);
-	float parte_real, parte_imaginaria, angulo, fase_float, modulo;
+	double real, imaginario, angulo;
+	short parte_real, parte_imaginaria, fase, magnitud;
+	fseek (salida, 44, SEEK_SET);
 	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
-		parte_real = 0;
-		parte_imaginaria = 0;
+		real = 0;
+		imaginario = 0;
 		for (n = 0; n < muestras; n ++)
 		{
 			angulo = ((2 * PI * k * n) / muestras);
-			parte_real += (signal [n] * (cos (angulo)));
-			parte_imaginaria += (signal [n] * sin (angulo));
+			real += (signal [n] * (cos (angulo)));
+			imaginario -= (signal [n] * sin (angulo));
 		}
-		parte_real = (parte_real / muestras);
-		parte_imaginaria = (parte_imaginaria / muestras * -1);
-
-		if ((parte_real == 0) && (parte_imaginaria == 0))
-		
-			modulo = 0;
-		else
-		{
-			parte_real = pow (parte_real, 2);
-			parte_imaginaria = pow (parte_imaginaria, 2);
-			modulo = sqrt ((parte_real + parte_imaginaria));
-		}
-		if (modulo == 0)
-			fase_float = 0;
+		parte_real = (real / muestras);
+		parte_imaginaria = (imaginario / muestras);
+		magnitud = (short) sqrt (pow (parte_real, 2) + pow (parte_imaginaria, 2));
+		if (magnitud == 0)
+			fase = 0;
 		else
 		{
 			if ((parte_real == 0) && (parte_imaginaria < 0))
-				fase_float = (- PI / 2);
+				fase = (short) (- PI / 2);
 			else if ((parte_real == 0) && (parte_imaginaria > 0))
-				fase_float = (PI / 2);
+				fase = (short) (PI / 2);
 			else if ((parte_real < 0) && (parte_imaginaria >= 0))
-				fase_float = (atan (parte_imaginaria / parte_real) + PI);
+				fase = (short) (atan (parte_imaginaria / parte_real) + PI);
 			else if ((parte_real < 0) && (parte_imaginaria < 0))
-				fase_float = (atan (parte_imaginaria / parte_real) - PI);
+				fase = (short) (atan (parte_imaginaria / parte_real) - PI);
 		}
-		fase_float = (fase_float / PI);
-		magnitud [k] = (modulo * max);
-		fase [k] = (fase_float * max);
+		fwrite (&magnitud, sizeof (short), 1, salida);
+		fwrite (&fase, sizeof (short), 1, salida);
 	}
 	//uswtime (&utime1, &wtime1);
-	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);
-
-	//Avanzamos el apuntador al archivo para evitar errores
-	fseek (salida, 44, SEEK_SET);
-
-	for (i = 0; i < muestras; i ++)
-	{
-		fwrite (&magnitud [i], sizeof (short), 1, salida);
-		fwrite (&fase [i], sizeof (short), 1, salida);
-	}	
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
 }
 
 /*void uswtime (double * usertime, double * walltime)

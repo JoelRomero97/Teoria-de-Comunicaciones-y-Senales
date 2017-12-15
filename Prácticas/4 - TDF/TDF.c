@@ -21,9 +21,7 @@ int main(int argc, char const *argv[])
 {
 	FILE * entrada, * salida;
 	cabecera cab;
-	short muestra;
 	int opcion_seleccionada, i, numero_muestras;
-	float max = 32767;
 	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
 	if (argc < 4)
