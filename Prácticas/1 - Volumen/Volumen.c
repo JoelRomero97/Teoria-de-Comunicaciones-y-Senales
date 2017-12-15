@@ -64,8 +64,8 @@ int main(int argc, char const *argv[])
 	for (i = 0; i < numero_muestras; i ++)
 	{
 		fread (&muestra, sizeof (short), 1, entrada);
-		muestra *= 0.5;												//Dividimos a la mitad cada uno de los datos
-		fwrite (&muestra, sizeof (short), 1, salida);				//Escribimos los datos nuevos en el archivo
+		muestra *= 0.5;
+		fwrite (&muestra, sizeof (short), 1, salida);
 	}
 	printf ("\n\n");
 	fclose (entrada);
