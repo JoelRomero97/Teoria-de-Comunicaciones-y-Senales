@@ -4,9 +4,12 @@ Este programa realiza el decremento del volumen (adaptable para aumentarlo) de u
 
 Para poder escuchar los audios y/o generar alguna otra señal, se puede utilizar el software "GoldWave" incluido en este repositorio en la sección de "Recursos".
 
-# Compilación y ejecución
+# Compilación
 
-gcc Volumen.c -o Volumen
+- gcc Cabecera.c -o Cabecera.o -c
+- gcc Volumen.c -o Volumen Cabecera.o
+
+# Ejecución
 
 Volumen.exe Entrada.wav Salida.wav
 
