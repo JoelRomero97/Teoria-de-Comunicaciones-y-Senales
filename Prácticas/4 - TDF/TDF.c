@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
 	//Imprimir los valores de la cabecera
 	imprimir_cabecera (&cab);
 
-	float * signal = (float *) malloc (sizeof (float) * (cab.SubChunk2Size / 2));
+	float * signal = (float *) malloc (sizeof (float) * numero_muestras);
 	printf ("\n\n");
 	for (i = 0; i < numero_muestras; i ++)
 	{
