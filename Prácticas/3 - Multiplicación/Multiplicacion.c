@@ -11,7 +11,7 @@
 //// por mono, o estéreo por estéreo.												////
 //// Compilación: gcc Cabecera.c -o Cabecera.o -c 									////
 ////			  gcc Multiplicacion.c -o Multiplicacion Cabecera.o					////
-//// Ejecuación: Multiplicacion.exe Entrada.wav Salida.wav							////
+//// Ejecuación: Multiplicacion.exe Archivo 1.wav Archivo 2.wav Salida.wav			////
 ////																				////
 ////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
