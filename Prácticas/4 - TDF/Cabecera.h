@@ -20,8 +20,8 @@ typedef struct CABECERA
 }cabecera;
 
 void imprimir_cabecera (cabecera * cab);
-void opcion_uno (FILE * salida, float * signal, cabecera * cab);
-void opcion_dos (FILE * salida, float * signal, cabecera * cab);
-void opcion_tres (FILE * salida, float * signal, cabecera * cab);
+void opcion_uno (FILE * salida, short * signal, cabecera * cab);
+void opcion_dos (FILE * salida, short * signal, cabecera * cab);
+void opcion_tres (FILE * salida, short * signal, cabecera * cab);
 void uswtime (double * usertime, double * walltime);
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion);

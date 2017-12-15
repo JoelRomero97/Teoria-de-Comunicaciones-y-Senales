@@ -71,13 +71,10 @@ int main(int argc, char const *argv[])
 	//Imprimir los valores de la cabecera
 	imprimir_cabecera (&cab);
 
-	float * signal = (float *) malloc (sizeof (float) * numero_muestras);
+	short * signal = (short *) malloc (sizeof (short) * numero_muestras);
 	printf ("\n\n");
 	for (i = 0; i < numero_muestras; i ++)
-	{
-		fread (&muestra, sizeof (short), 1, entrada);
-		signal [i] = (muestra / max);
-	}
+		fread (&signal [i], sizeof (short), 1, entrada);
 
 	if (opcion_seleccionada == -1)
 		opcion_uno (salida, signal, &cab);

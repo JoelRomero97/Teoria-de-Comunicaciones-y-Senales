@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <sys/resource.h>
-#include <sys/time.h>
+//#include <sys/resource.h>
+//#include <sys/time.h>
 #include "Cabecera.h"
 #define PI 3.14159265
 
@@ -33,96 +33,70 @@ void imprimir_cabecera (cabecera * cab)
 	printf ("(41-44) SubChunk 2 Size: %u\n", cab -> SubChunk2Size);
 }
 
-void opcion_uno (FILE * salida, float * signal, cabecera * cab)
+void opcion_uno (FILE * salida, short * signal, cabecera * cab)
 {
 	int i, k, n;
 	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
-	short * magnitud = (short *) malloc (sizeof (short) * muestras);
-	short * original = (short *) malloc (sizeof (short) * muestras);
-	float parte_real, parte_imaginaria, angulo, modulo;
-	uswtime (&utime0, &wtime0);
+	double real, imaginario, angulo;
+	short parte_real, parte_imaginaria, original, magnitud;
+	fseek (salida, 44, SEEK_SET);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
-		parte_real = 0;
-		parte_imaginaria = 0;
+		real = 0;
+		imaginario = 0;
+		original = signal [k];
 		for (n = 0; n < muestras; n ++)
 		{
 			angulo = ((2 * PI * k * n) / muestras);
-			parte_real += (signal [n] * (cos (angulo)));
-			parte_imaginaria += (signal [n] * sin (angulo));
+			real += (signal [n] * (cos (angulo)));
+			imaginario -= (signal [n] * sin (angulo));
 		}
-		parte_real = (parte_real / muestras);
-		parte_imaginaria = (parte_imaginaria / muestras);
-		if ((parte_real == 0) && (parte_imaginaria == 0))
-			modulo = 0;
-		else
-		{
-			parte_real = pow (parte_real, 2);
-			parte_imaginaria = pow (parte_imaginaria, 2);
-			modulo = sqrt ((parte_real + parte_imaginaria));
-		}
-		magnitud [k] = (modulo * max);
+		parte_real = (real / muestras);
+		parte_imaginaria = (imaginario / muestras);
+		magnitud = (short) sqrt (pow (parte_real, 2) + pow (parte_imaginaria, 2));
+		fwrite (&original, sizeof (short), 1, salida);
+		fwrite (&magnitud, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 1);
-
-	for (k = 0; k < muestras; k ++)
-		original [k] = (signal [k] * max);
-
-	//Avanzamos el apuntador al archivo para evitar errores
-	fseek (salida, 44, SEEK_SET);
-	
-	for (i = 0; i < muestras; i ++)
-	{
-		fwrite (&original [i], sizeof (short), 1, salida);
-		fwrite (&magnitud [i], sizeof (short), 1, salida);
-	}	
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
 }
 
-void opcion_dos (FILE * salida, float * signal, cabecera * cab)
+void opcion_dos (FILE * salida, short * signal, cabecera * cab)
 {
 	int i, k, n;
 	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
-	short * real = (short *) malloc (sizeof (short) * muestras);
-	short * imaginario = (short *) malloc (sizeof (short) * muestras);
-	float parte_real, parte_imaginaria, angulo;
-	uswtime (&utime0, &wtime0);
+	double real, imaginario, angulo;
+	short parte_real, parte_imaginaria;
+	fseek (salida, 44, SEEK_SET);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
-		parte_real = 0;
-		parte_imaginaria = 0;
+		real = 0;
+		imaginario = 0;
 		for (n = 0; n < muestras; n ++)
 		{
 			angulo = ((2 * PI * k * n) / muestras);
-			parte_real += (signal [n] * (cos (angulo)));
-			parte_imaginaria += (signal [n] * sin (angulo));
+			real += (signal [n] * (cos (angulo)));
+			imaginario -= (signal [n] * sin (angulo));
 		}
-		parte_real = (parte_real / muestras);
-		parte_imaginaria = (parte_imaginaria / muestras);
-		real [k] = (parte_real * max);
-		imaginario [k] = (parte_imaginaria * -1 * max);
+		parte_real = (real / muestras);
+		parte_imaginaria = (imaginario / muestras);
+		fwrite (&parte_real, sizeof (short), 1, salida);
+		fwrite (&parte_imaginaria, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
-
-	//Avanzamos el apuntador al archivo para evitar errores
-	fseek (salida, 44, SEEK_SET);
-	
-	for (i = 0; i < muestras; i ++)
-	{
-		fwrite (&real [i], sizeof (short), 1, salida);
-		fwrite (&imaginario [i], sizeof (short), 1, salida);
-	}
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
 }
 
-void opcion_tres (FILE * salida, float * signal, cabecera * cab)
+void opcion_tres (FILE * salida, short * signal, cabecera * cab)
 {
 	int i, k, n;
 	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
 	short * magnitud = (short *) malloc (sizeof (short) * muestras);
 	short * fase = (short *) malloc (sizeof (short) * muestras);
 	float parte_real, parte_imaginaria, angulo, fase_float, modulo;
-	uswtime (&utime0, &wtime0);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		parte_real = 0;
@@ -162,8 +136,8 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 		magnitud [k] = (modulo * max);
 		fase [k] = (fase_float * max);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);
 
 	//Avanzamos el apuntador al archivo para evitar errores
 	fseek (salida, 44, SEEK_SET);
@@ -175,7 +149,7 @@ void opcion_tres (FILE * salida, float * signal, cabecera * cab)
 	}	
 }
 
-void uswtime (double * usertime, double * walltime)
+/*void uswtime (double * usertime, double * walltime)
 {
 	double mega = 1.0e-6;
 	struct rusage buffer;
@@ -185,7 +159,7 @@ void uswtime (double * usertime, double * walltime)
 	gettimeofday (&tp, &tzp);
 	*usertime = (double) buffer.ru_utime.tv_sec +1.0e-6 * buffer.ru_utime.tv_usec;
 	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
-}
+}*/
 
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
 {
