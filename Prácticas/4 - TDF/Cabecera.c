@@ -1,9 +1,9 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <sys/resource.h>
-#include <sys/time.h>
+//#include <sys/resource.h>
+//#include <sys/time.h>
 #include "Cabecera.h"
 #define PI 3.14159265
 
@@ -12,6 +12,7 @@ double utime0, wtime0, utime1, wtime1;
 void imprimir_cabecera (cabecera * cab)
 {
 	char * formatoArchivo = (char *) malloc (sizeof (char));
+	printf ("\n\n");
 	printf ("(1-4) Chunk ID: %s\n", cab -> ChunkID);
 	printf ("(5-8) ChunkSize:  %u\n", cab -> ChunkSize);
 	printf ("(9-12) Format: %s\n", cab -> Format);
@@ -30,7 +31,7 @@ void imprimir_cabecera (cabecera * cab)
 	printf ("(33-34) Block Align: %u\n", cab -> BlockAlign);
 	printf ("(35-36) Bits Per Sample: %u\n", cab -> BitsPerSample);
 	printf ("(37-40) SubChunk 2 ID: %s\n", cab -> SubChunk2ID);
-	printf ("(41-44) SubChunk 2 Size: %u\n", cab -> SubChunk2Size);
+	printf ("(41-44) SubChunk 2 Size: %u\n\n\n", cab -> SubChunk2Size);
 }
 
 void opcion_uno (FILE * salida, short * signal, cabecera * cab)
@@ -40,7 +41,7 @@ void opcion_uno (FILE * salida, short * signal, cabecera * cab)
 	double real, imaginario, angulo;
 	short parte_real, parte_imaginaria, original, magnitud;
 	fseek (salida, 44, SEEK_SET);
-	uswtime (&utime0, &wtime0);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		real = 0;
@@ -58,8 +59,8 @@ void opcion_uno (FILE * salida, short * signal, cabecera * cab)
 		fwrite (&original, sizeof (short), 1, salida);
 		fwrite (&magnitud, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 1);
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 1);
 }
 
 void opcion_dos (FILE * salida, short * signal, cabecera * cab)
@@ -69,7 +70,7 @@ void opcion_dos (FILE * salida, short * signal, cabecera * cab)
 	double real, imaginario, angulo;
 	short parte_real, parte_imaginaria;
 	fseek (salida, 44, SEEK_SET);
-	uswtime (&utime0, &wtime0);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		real = 0;
@@ -85,8 +86,8 @@ void opcion_dos (FILE * salida, short * signal, cabecera * cab)
 		fwrite (&parte_real, sizeof (short), 1, salida);
 		fwrite (&parte_imaginaria, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 2);
 }
 
 void opcion_tres (FILE * salida, short * signal, cabecera * cab)
@@ -96,7 +97,7 @@ void opcion_tres (FILE * salida, short * signal, cabecera * cab)
 	double real, imaginario, angulo;
 	short parte_real, parte_imaginaria, fase, magnitud;
 	fseek (salida, 44, SEEK_SET);
-	uswtime (&utime0, &wtime0);
+	//uswtime (&utime0, &wtime0);
 	for (k = 0; k < muestras; k ++)
 	{
 		real = 0;
@@ -126,11 +127,11 @@ void opcion_tres (FILE * salida, short * signal, cabecera * cab)
 		fwrite (&magnitud, sizeof (short), 1, salida);
 		fwrite (&fase, sizeof (short), 1, salida);
 	}
-	uswtime (&utime1, &wtime1);
-	calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);
+	//uswtime (&utime1, &wtime1);
+	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);
 }
 
-void uswtime (double * usertime, double * walltime)
+/*void uswtime (double * usertime, double * walltime)
 {
 	double mega = 1.0e-6;
 	struct rusage buffer;
@@ -140,7 +141,7 @@ void uswtime (double * usertime, double * walltime)
 	gettimeofday (&tp, &tzp);
 	*usertime = (double) buffer.ru_utime.tv_sec +1.0e-6 * buffer.ru_utime.tv_usec;
 	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
-}
+}*/
 
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
 {

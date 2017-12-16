@@ -1,6 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <stdio.h>
 #include "Cabecera.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ int main(int argc, char const *argv[])
 	if (argc < 4)
 	{
 		printf("Error, faltan argumentos.\n");
-		printf ("Ejemplo: '%s -1 Archivo1.wav Salida.wav'\n\n", argv [0]);
+		printf ("Ejemplo: '%s -1 Entrada.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
 	}else
 	{
@@ -70,7 +69,6 @@ int main(int argc, char const *argv[])
 	imprimir_cabecera (&cab);
 
 	short * signal = (short *) malloc (sizeof (short) * numero_muestras);
-	printf ("\n\n");
 	for (i = 0; i < numero_muestras; i ++)
 		fread (&signal [i], sizeof (short), 1, entrada);
 
