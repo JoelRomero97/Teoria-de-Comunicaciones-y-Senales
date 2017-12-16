@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 	if (argc < 3)
 	{
 		printf("Error, faltan argumentos.\n");
-		printf ("Ejemplo: '%s Archivo.wav Salida.wav'\n\n", argv [0]);
+		printf ("Ejemplo: '%s Entrada.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
 	}else
 	{
