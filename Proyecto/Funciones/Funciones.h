@@ -1,1 +1,0 @@
-snd_pcm_t * establecer_parametros (snd_pcm_t * manejador);
