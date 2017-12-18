@@ -7,6 +7,8 @@ La marcación por tonos es utilizado por las telefonías para determinar que tec
 - chmod 777 Proyecto.sh
 - ./Proyecto.sh
 
-# Autor
+# Autores
 
 Joel Mauricio Romero Gamarra
+
+René Zavala Pérez
