@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ -f DTMF ]; then
 	rm DTMF
 fi
@@ -10,4 +9,4 @@ fi
 
 gcc Funciones.c -o Funciones.o -c -lm
 gcc DTMF.c -o DTMF Funciones.o -lm -lasound
-./DTMF
+./DTMF 3905 127.0.0.1
