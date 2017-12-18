@@ -2,8 +2,6 @@
 
 En este programa, se realiza la implementación de la Transformada Discreta de Fourier en C para poder observar una señal en el dominio de la frecuencia y poder comenzar a hacer el análisis para reconocer vocales o algún otro sonido por medio de sus frecuencias y picos por analizados con un diagrama de Bode.
 
-NOTA: El costo del algoritmo que realiza la TDF es demasiado alto, esto será optimizado posteriormente realizando la Transformada Rápida de Fourier (FFT) utilizando menos operaciones y menos recursos de memoria.
-
 # Compilación
 
 - gcc Cabecera.c -o Cabecera.o -c
@@ -22,7 +20,8 @@ NOTA: El costo del algoritmo que realiza la TDF es demasiado alto, esto será op
 
 # Nota
 
-Si se desea ejecutar el programa en Windows, deben comentarse las librerías sys/resource.h y sys/time.h, además, comentar las funciones uswtime y calculaTiempo.
+- El costo del algoritmo que realiza la TDF es demasiado alto, esto será optimizado posteriormente realizando la Transformada Rápida de Fourier (FFT) utilizando menos operaciones y menos recursos de memoria.
+- Si se desea ejecutar el programa en Windows, deben comentarse las librerías sys/resource.h y sys/time.h, además, comentar las funciones uswtime y calculaTiempo.
 
 # Autor
 
