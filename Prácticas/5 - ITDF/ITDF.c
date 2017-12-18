@@ -11,7 +11,7 @@
 //// del dominio de la frecuencia al dominio del tiempo y reconstruir una señal.	////
 //// Compilación: gcc Cabecera.c -o Cabecera.o -c 									////
 ////			  gcc ITDF.c -o ITDF Cabecera.o										////
-//// Ejecuación: ITDF.exe -2 Entrada.wav Salida.wav									////
+//// Ejecuación: ITDF.exe Entrada.wav Salida.wav									////
 ////																				////
 //// Autor: Romero Gamarra Joel Mauricio											////
 ////////////////////////////////////////////////////////////////////////////////////////
