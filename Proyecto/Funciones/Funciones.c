@@ -1,12 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
-#define TIEMPO 5000000
+#include <string.h>
 #include "Funciones.h"
+#define TIEMPO 1
+#define sample_rate 44100
 
+/*
+establecer_parametros (manejador, tam, segundos)
+Recibe: Apuntador de tipo snd_pcm_t, tamaño de arreglo para muestras, número de segundos que será leído el sonido
+Retorna: Manejador con todos los parametros correctos para recibir sonido
+Efecto: Establecer los parámetros necesarios para recibir sonido, como: tipo de muestras, frecuencia de muestreo, numero de canales, etc.
+Requerimientos: Contar con la instalación de asoundlib en linux
+*/
 snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned int * segundos)
 {
-	int flag, dir, frecuencia = 44100;
+	int flag, dir, frecuencia = sample_rate;
 	unsigned int canales = 2, val;
 	char * dispositivo = "hw:0";
 	snd_pcm_uframes_t muestras = 32;
@@ -115,9 +124,34 @@ snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned in
 		exit (1);
 	}else
 		printf ("Duracion establecida correctamente.\n\n");
-	*segundos = (TIEMPO / val);
+	*segundos = ((TIEMPO * 1000000) / val);
 
 	//Ya que se establecieron todos los parametros, se libera la estructura
 	snd_pcm_hw_params_free (hw_params);
 	return manejador;
+}
+
+/*
+generar_archivo_wav (datos)
+Recibe: Arreglo que contiene los datos a escribir
+Retorna: N/A
+Efecto: Escribir los datos en un archivo wav eliminando los datos leídos del segundo canal (se convierte de un archivo stereo a un archivo mono)
+Requerimientos: Conocer la estructura de un archivo wav y como crear uno
+*/
+void generar_archivo_wav (short * datos)
+{
+	cabecera cab;
+	strcpy (cab.ChunkID, "RIFF");								//Especificacion de archivos multimedia
+	//cab.ChunkSize = tam_total;								//Tamaño total del archivo - 8 bytes
+	strcpy (cab.Format, "WAVE");								//Describe el formato del archivo (subchunk fmt y data)
+	strcpy (cab.SubChunk1ID, "fmt ");							//Describe el formato de los datos
+	//cab.SubChunk1Size = tam_subchunk_fmt;						//Tamaño del subchunk fmt
+	cab.AudioFormat = 1;										//PCM
+	cab.NumChannels = 1;										//Archivo Mono
+	cab.SampleRate = sample_rate;								//Frecuencia de muestreo
+	cab.ByteRate = ((sample_rate * 16) / 8);					//(SampleRate * NumChannels * BitsPerSample) / 8
+	cab.BlockAlign = 2;											//(NumChannels * BitsPerSample) / 8
+	cab.BitsPerSample = 16;										//2 bytes (short) = 16 bits
+	strcpy (cab.SubChunk2ID, "data");							//Identificador del ultimo subchunk
+	//cab.SubChunk2Size = tam_datos;							//Datos totales sin contar la cabecera
 }
