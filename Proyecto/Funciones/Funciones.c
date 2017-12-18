@@ -1,24 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
-#include <string.h>
 #include "Funciones.h"
-#define TIEMPO 1
-#define sample_rate 44100
 
-/*
-establecer_parametros (manejador, tam, segundos)
-Recibe: Apuntador de tipo snd_pcm_t, tamaño de arreglo para muestras, número de segundos que será leído el sonido
-Retorna: Manejador con todos los parametros correctos para recibir sonido
-Efecto: Establecer los parámetros necesarios para recibir sonido, como: tipo de muestras, frecuencia de muestreo, numero de canales, etc.
-Requerimientos: Contar con la instalación de asoundlib en linux
-*/
-snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned int * segundos)
+snd_pcm_t * establecer_parametros (snd_pcm_t * manejador)
 {
-	int flag, dir, frecuencia = sample_rate;
-	unsigned int canales = 2, val;
+	int flag;
+	int resampling = 1;											//0 para deshabilitar
+	unsigned int canales = 2, latencia = 500000;
+	int frecuencia = 44100;
 	char * dispositivo = "hw:0";
-	snd_pcm_uframes_t muestras = 32;
 	snd_pcm_hw_params_t * hw_params;
 	snd_pcm_format_t formato = SND_PCM_FORMAT_S16_LE;			//Little Endian
 	snd_pcm_format_t acceso = SND_PCM_ACCESS_RW_INTERLEAVED;
@@ -71,7 +62,7 @@ snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned in
 		printf ("Formato de muestra establecido correctamente.\n");
 
 	//Establecer la frecuencia de muestreo
-	flag = snd_pcm_hw_params_set_rate_near (manejador, hw_params, &frecuencia, &dir);
+	flag = snd_pcm_hw_params_set_rate_near (manejador, hw_params, &frecuencia, 0);
 	if (flag < 0)
 	{
 		printf ("\n\nNo fue posible establecer la frecuencia de muestreo: %s\n", snd_strerror (flag));
@@ -88,15 +79,6 @@ snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned in
 	}else
 		printf ("Numero de canales establecido correctamente.\n");
 
-	//Establecer el numero de frames
-	flag = snd_pcm_hw_params_set_period_size_near (manejador, hw_params, &muestras, &dir);
-	if (flag < 0)
-	{
-		printf ("\n\nNo fue posible establecer el tamaño del periodo: %s\n", snd_strerror (flag));
-		exit (1);
-	}else
-		printf ("Tamaño del periodo establecido correctamente.\n");
-
 	//Establecer los parametros de hardware y software en el manejador
 	flag = snd_pcm_hw_params (manejador, hw_params);
 	if (flag < 0)
@@ -104,54 +86,20 @@ snd_pcm_t * establecer_parametros (snd_pcm_t * manejador, int * tam, unsigned in
 		printf ("\n\nNo fue posible establecer los parametros de hardware y software: %s\n", snd_strerror (flag));
 		exit (1);
 	}else
-		printf ("Parametros de hardware y software establecidos correctamente.\n");
-
-	//Usar un búfer suficientemente grande para contener un periodo
-	flag = snd_pcm_hw_params_get_period_size (hw_params, &muestras, &dir);
-	if (flag < 0)
-	{
-		printf ("\n\nNo fue posible establecer el tamaño del buffer: %s\n", snd_strerror (flag));
-		exit (1);
-	}else
-		printf ("Tamaño del buffer establecido correctamente.\n");
-	*tam = (muestras * 4);
-
-	//Establecer un tiempo de 5 segundos para recibir sonido
-	flag = snd_pcm_hw_params_get_period_time (hw_params, &val, &dir);
-	if (flag < 0)
-	{
-		printf ("\n\nNo fue posible establecer la duracion: %s\n", snd_strerror (flag));
-		exit (1);
-	}else
-		printf ("Duracion establecida correctamente.\n\n");
-	*segundos = ((TIEMPO * 1000000) / val);
+		printf ("\nParametros de hardware y software establecidos correctamente.\n\n");
 
 	//Ya que se establecieron todos los parametros, se libera la estructura
 	snd_pcm_hw_params_free (hw_params);
+	
+	/*
+	ESTABLECER LOS PARAMETROS DE HARDWARE EN 1 MISMA FUNCION
+	flag = snd_pcm_set_params (manejador, formato, acceso, canales, frecuencia, resampling, latencia);
+	if (flag < 0)
+	{
+		printf ("\n\nNo fue posible establecer los parametros de hardware y software: %s\n", snd_strerror (flag));
+		exit (1);
+	}else
+		printf ("Parametros de hardware y software establecidos correctamente.\n");
+	*/
 	return manejador;
-}
-
-/*
-generar_archivo_wav (datos)
-Recibe: Arreglo que contiene los datos a escribir
-Retorna: N/A
-Efecto: Escribir los datos en un archivo wav eliminando los datos leídos del segundo canal (se convierte de un archivo stereo a un archivo mono)
-Requerimientos: Conocer la estructura de un archivo wav y como crear uno
-*/
-void generar_archivo_wav (short * datos)
-{
-	cabecera cab;
-	strcpy (cab.ChunkID, "RIFF");								//Especificacion de archivos multimedia
-	//cab.ChunkSize = tam_total;								//Tamaño total del archivo - 8 bytes
-	strcpy (cab.Format, "WAVE");								//Describe el formato del archivo (subchunk fmt y data)
-	strcpy (cab.SubChunk1ID, "fmt ");							//Describe el formato de los datos
-	//cab.SubChunk1Size = tam_subchunk_fmt;						//Tamaño del subchunk fmt
-	cab.AudioFormat = 1;										//PCM
-	cab.NumChannels = 1;										//Archivo Mono
-	cab.SampleRate = sample_rate;								//Frecuencia de muestreo
-	cab.ByteRate = ((sample_rate * 16) / 8);					//(SampleRate * NumChannels * BitsPerSample) / 8
-	cab.BlockAlign = 2;											//(NumChannels * BitsPerSample) / 8
-	cab.BitsPerSample = 16;										//2 bytes (short) = 16 bits
-	strcpy (cab.SubChunk2ID, "data");							//Identificador del ultimo subchunk
-	//cab.SubChunk2Size = tam_datos;							//Datos totales sin contar la cabecera
 }

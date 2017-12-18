@@ -7,32 +7,42 @@
 int main(int argc, char const *argv[])
 {
 	system ("clear");
-	int flag, tam, i;
-	unsigned int segundos;
+	int i, j, flag, muestras = 128;
+	int tam;
+	unsigned int canales = 2, latencia = 500000;
+	int frecuencia = 44100;
 	snd_pcm_t * manejador;
-	snd_pcm_uframes_t muestras = 32;
-	manejador = establecer_parametros (manejador, &tam, &segundos);
-	short * datos = (short *) malloc (sizeof (short) * tam);
-	int ciclo = 1;
-	while (segundos > 0)
+	snd_pcm_format_t formato = SND_PCM_FORMAT_S16_LE;			//Little Endian
+
+	manejador = establecer_parametros (manejador);
+
+	flag = snd_pcm_prepare (manejador);
+	if (flag < 0)
 	{
-		segundos = (segundos - 1);
+		printf ("\n\nNo fue posible preparar la interfaz de audio para usarse: %s\n", snd_strerror (flag));
+		exit (1);
+	}else
+		printf ("Interfaz de audio lista.\n");
+
+	tam = (((muestras * snd_pcm_format_width (formato)) / 8) * 2);
+	short * datos = (short *) malloc (tam);
+
+	for (i = 0; i < 10; i ++)
+	{
 		flag = snd_pcm_readi (manejador, datos, muestras);
-		//for (i = 0; i < (sizeof (datos)); i ++)
-		//	printf ("Muestra del ciclo %d: %d\n", ciclo, datos [i]);
-		//ciclo ++;
-		if (flag < 0)
+		if (flag != muestras)
 		{
-			printf ("\n\nNo fue posible recibir audio: %s\n\n", snd_strerror (flag));
+			printf ("Error al recibir el audio: %s", snd_strerror (flag));
 			exit (1);
-		}else if (flag == -EPIPE)
+		}else
 		{
-			printf ("\n\nSe recibieron mas muestras de las esperadas: %s\n\n", snd_strerror (flag));
-			exit (1);
+			for (j = 0; j < tam; j ++)
+				if (datos [j] != 0)
+					printf ("Muestra %d del ciclo %d: %d\n", (j + 1), (i + 1), datos [j]);
+			printf ("\n\n");
 		}
 	}
-	//generar_archivo_wav (datos);
-	//Ya que se obtiene el sonido, cerramos el manejador
+
 	snd_pcm_close (manejador);
 	return 0;
 }
