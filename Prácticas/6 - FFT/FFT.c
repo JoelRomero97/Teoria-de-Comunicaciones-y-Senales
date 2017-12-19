@@ -22,20 +22,19 @@ int main(int argc, char const *argv[])
 	FILE * entrada, * salida;
 	cabecera cab;
 	short muestra;
-	int opcion_seleccionada, i, numero_muestras, inversa;
+	int opcion_seleccionada, i, numero_muestras;
 	char * archivo_salida = (char *) malloc (sizeof (char));
 	char * archivo_entrada = (char *) malloc (sizeof (char));
-	if (argc < 5)
+	if (argc < 4)
 	{
 		printf("Error, faltan argumentos.\n");
-		printf ("Ejemplo: '%s -1 Entrada.wav Salida.wav 0'\n\n", argv [0]);
+		printf ("Ejemplo: '%s -1 Entrada.wav Salida.wav'\n\n", argv [0]);
 		exit (0);
 	}else
 	{
 		opcion_seleccionada = atoi (argv [1]);
 		archivo_entrada = (char *) argv [2];
 		archivo_salida = (char *) argv [3];
-		inversa = atoi (argv [4]);
 	}
 
 	//Abrimos los archivos en modo binario
@@ -82,11 +81,11 @@ int main(int argc, char const *argv[])
 	}
 
 	if (opcion_seleccionada == -1)
-		opcion_uno (salida, re, im, numero_muestras, inversa);
+		opcion_uno (salida, re, im, numero_muestras);
 	else if (opcion_seleccionada == -2)
-		opcion_dos (salida, re, im, numero_muestras, inversa);
+		opcion_dos (salida, re, im, numero_muestras);
 	else if (opcion_seleccionada == -3)
-		opcion_tres (salida, re, im, numero_muestras, inversa);
+		opcion_tres (salida, re, im, numero_muestras);
 	else
 	{
 		printf ("\nOpcion invalida");

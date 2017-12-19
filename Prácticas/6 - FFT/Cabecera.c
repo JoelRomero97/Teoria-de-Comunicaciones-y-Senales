@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-//#include <sys/resource.h>
-//#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/time.h>
 #include "Cabecera.h"
 #define PI 3.14159265
 
@@ -34,26 +34,23 @@ void imprimir_cabecera (cabecera * cab)
 	printf ("(41-44) SubChunk 2 Size: %u\n\n\n", cab -> SubChunk2Size);
 }
 
-void opcion_uno (FILE * salida, float * xr, float * xi, int numero_muestras, int inv)
-{
-	//Señal original
-	//Magnitud
-}
-
-void opcion_dos (FILE * salida, float * xr, float * xi, int numero_muestras, int inv)
+void opcion_uno (FILE * salida, float * xr, float * xi, int numero_muestras)
 {
 	int i, j, k, j1, m, n;
 	float arg, s, c, w, tempr, tempi;
-	short parte_real, parte_imaginaria;
-	m = (log ((float) numero_muestras) / log (2));
+	short parte_real, parte_imaginaria, magnitud;
+	short * original = (short *) malloc (sizeof (short) * numero_muestras);
+	m = (log (numero_muestras) / log (2));
 	fseek (salida, 44, SEEK_SET);
-	//uswtime (&utime0, &wtime0);
-	//Bit Reversal
 	for (i = 0; i < numero_muestras; i ++)
+		original [i] = (short) xr [i];
+	uswtime (&utime0, &wtime0);
+	//Bit Reversal
+	for (i = 0; i < numero_muestras; ++ i)
 	{
 		j = 0;
 		for (k = 0; k < m; ++ k)
-			j = ((j << 1) | (1 & (i >> k)));
+			j = (j << 1) | (1 & (i >> k));
 		if (j < i)
 		{
 			swap (&xr [i], &xr [j]);
@@ -62,10 +59,65 @@ void opcion_dos (FILE * salida, float * xr, float * xi, int numero_muestras, int
 	}
 	for (i = 0; i < m; i ++)
 	{
-		n = w = pow (2.0, (float) i);
+		n = w = pow (2, i);
 		w = (PI / n);
-		if (inv == 1)
-			w = -w;
+		k = 0;
+		while (k < (numero_muestras - 1))
+		{
+			for (j = 0; j < n; j ++)
+			{
+				arg = (-j * w);
+				c = cos (arg);
+				s = sin (arg);
+				j1 = (k + j);
+				tempr = ((xr [j1 + n] * c) - (xi [j1 + n] * s));
+				tempi = ((xi [j1 + n] * c) + (xr [j1 + n] * s));
+				xr [j1 + n] = (xr [j1] - tempr);
+				xi [j1 + n] = (xi [j1] - tempi);
+				xr [j1] = (xr [j1] + tempr);
+				xi [j1] = (xi [j1] + tempi);
+			}
+			k += (2 * n);
+		}
+	}
+	for (i = 0; i < numero_muestras; i ++)
+	{
+		parte_real = xr [i];
+		parte_imaginaria = xi [i];
+		parte_real /= 2;
+		parte_imaginaria /= 2;
+		magnitud = sqrt (pow (parte_real, 2) + pow (parte_imaginaria, 2));
+		fwrite (&original [i], sizeof (short), 1, salida);
+		fwrite (&magnitud, sizeof (short), 1, salida);
+	}
+	uswtime (&utime1, &wtime1);
+	calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 1);
+}
+
+void opcion_dos (FILE * salida, float * xr, float * xi, int numero_muestras)
+{
+	int i, j, k, j1, m, n;
+	float arg, s, c, w, tempr, tempi;
+	short parte_real, parte_imaginaria;
+	m = (log (numero_muestras) / log (2));
+	fseek (salida, 44, SEEK_SET);
+	uswtime (&utime0, &wtime0);
+	//Bit Reversal
+	for (i = 0; i < numero_muestras; ++ i)
+	{
+		j = 0;
+		for (k = 0; k < m; ++ k)
+			j = (j << 1) | (1 & (i >> k));
+		if (j < i)
+		{
+			swap (&xr [i], &xr [j]);
+			swap (&xi [i], &xi [j]);
+		}
+	}
+	for (i = 0; i < m; i ++)
+	{
+		n = w = pow (2, i);
+		w = (PI / n);
 		k = 0;
 		while (k < (numero_muestras - 1))
 		{
@@ -94,44 +146,60 @@ void opcion_dos (FILE * salida, float * xr, float * xi, int numero_muestras, int
 		fwrite (&parte_real, sizeof (short), 1, salida);
 		fwrite (&parte_imaginaria, sizeof (short), 1, salida);
 	}
-	//uswtime (&utime1, &wtime1);
-	//calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 2);
+	uswtime (&utime1, &wtime1);
+	calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 2);
 }
 
-void opcion_tres (FILE * salida, float * xr, float * xi, int numero_muestras, int inv)
+void opcion_tres (FILE * salida, float * xr, float * xi, int numero_muestras)
 {
-	//Magnitud
-	//Fase
-
-
-
-
-
-
-
-
-
-
-
-	/*int i, k, n;
-	float max = 32767, muestras = (cab -> SubChunk2Size / cab -> BlockAlign);
-	double real, imaginario, angulo;
-	short parte_real, parte_imaginaria, fase, magnitud;
+	int i, j, k, j1, m, n;
+	float arg, s, c, w, tempr, tempi;
+	short parte_real, parte_imaginaria, magnitud, fase;
+	m = (log (numero_muestras) / log (2));
 	fseek (salida, 44, SEEK_SET);
-	//uswtime (&utime0, &wtime0);
-	for (k = 0; k < muestras; k ++)
+	uswtime (&utime0, &wtime0);
+	//Bit Reversal
+	for (i = 0; i < numero_muestras; ++ i)
 	{
-		real = 0;
-		imaginario = 0;
-		for (n = 0; n < muestras; n ++)
+		j = 0;
+		for (k = 0; k < m; ++ k)
+			j = (j << 1) | (1 & (i >> k));
+		if (j < i)
 		{
-			angulo = ((2 * PI * k * n) / muestras);
-			real += (signal [n] * (cos (angulo)));
-			imaginario -= (signal [n] * sin (angulo));
+			swap (&xr [i], &xr [j]);
+			swap (&xi [i], &xi [j]);
 		}
-		parte_real = (real / muestras);
-		parte_imaginaria = (imaginario / muestras);
-		magnitud = (short) sqrt (pow (parte_real, 2) + pow (parte_imaginaria, 2));
+	}
+	for (i = 0; i < m; i ++)
+	{
+		n = w = pow (2, i);
+		w = (PI / n);
+		k = 0;
+		while (k < (numero_muestras - 1))
+		{
+			for (j = 0; j < n; j ++)
+			{
+				arg = (-j * w);
+				c = cos (arg);
+				s = sin (arg);
+				j1 = (k + j);
+				tempr = ((xr [j1 + n] * c) - (xi [j1 + n] * s));
+				tempi = ((xi [j1 + n] * c) + (xr [j1 + n] * s));
+				xr [j1 + n] = (xr [j1] - tempr);
+				xi [j1 + n] = (xi [j1] - tempi);
+				xr [j1] = (xr [j1] + tempr);
+				xi [j1] = (xi [j1] + tempi);
+			}
+			k += (2 * n);
+		}
+	}
+	for (i = 0; i < numero_muestras; i ++)
+	{
+		parte_real = xr [i];
+		parte_imaginaria = xi [i];
+		parte_real /= 2;
+		parte_imaginaria /= 2;
+		magnitud = sqrt ((parte_real * parte_real) + (parte_imaginaria * parte_imaginaria));
 		if (magnitud == 0)
 			fase = 0;
 		else
@@ -148,8 +216,8 @@ void opcion_tres (FILE * salida, float * xr, float * xi, int numero_muestras, in
 		fwrite (&magnitud, sizeof (short), 1, salida);
 		fwrite (&fase, sizeof (short), 1, salida);
 	}
-	//uswtime (&utime1, &wtime1);
-	//calculaTiempo (utime0, wtime0, utime1, wtime1, muestras, 3);*/
+	uswtime (&utime1, &wtime1);
+	calculaTiempo (utime0, wtime0, utime1, wtime1, numero_muestras, 3);
 }
 
 void swap (float * a, float * b)
@@ -161,7 +229,7 @@ void swap (float * a, float * b)
 	return;
 }
 
-/*void uswtime (double * usertime, double * walltime)
+void uswtime (double * usertime, double * walltime)
 {
 	double mega = 1.0e-6;
 	struct rusage buffer;
@@ -171,7 +239,7 @@ void swap (float * a, float * b)
 	gettimeofday (&tp, &tzp);
 	*usertime = (double) buffer.ru_utime.tv_sec +1.0e-6 * buffer.ru_utime.tv_usec;
 	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
-}*/
+}
 
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion)
 {

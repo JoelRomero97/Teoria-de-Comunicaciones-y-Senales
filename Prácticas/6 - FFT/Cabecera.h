@@ -20,9 +20,9 @@ typedef struct CABECERA
 }cabecera;
 
 void imprimir_cabecera (cabecera * cab);
-void opcion_uno (FILE * salida, float * re, float * im, int numero_muestras, int inv);
-void opcion_dos (FILE * salida, float * re, float * im, int numero_muestras, int inv);
-void opcion_tres (FILE * salida, float * re, float * im, int numero_muestras, int inv);
+void opcion_uno (FILE * salida, float * re, float * im, int numero_muestras);
+void opcion_dos (FILE * salida, float * re, float * im, int numero_muestras);
+void opcion_tres (FILE * salida, float * re, float * im, int numero_muestras);
 void swap (float * a, float * b);
 void uswtime (double * usertime, double * walltime);
 void calculaTiempo (double utime0, double wtime0, double utime1, double wtime1, int n, int opcion);
